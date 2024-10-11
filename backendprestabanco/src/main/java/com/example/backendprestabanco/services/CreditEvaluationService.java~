@@ -277,37 +277,5 @@ public class CreditEvaluationService {
     }
 
     // R7.6 Resultado de la evaluación
-    // Función para evaluar la capacidad de ahorro del cliente según las 5 reglas
-    public String evaluateSavingsCapacity(String rut, double loanAmount) {
-        int rulesMet = 0;
-        // Regla 1: Saldo mínimo requerido
-        if (hasMinimumRequiredBalance(rut, loanAmount)) {
-            rulesMet++;
-        }
-        // Regla 2: Historial de ahorro consistente
-        if (hasConsistentSavingsHistory(rut)) {
-            rulesMet++;
-        }
-        // Regla 3: Depósitos periódicos
-        if (hasRegularDeposits(rut)) {
-            rulesMet++;
-        }
-        // Regla 4: Relación saldo/años de antigüedad
-        if (hasRequiredBalanceForTenure(rut, loanAmount)) {
-            rulesMet++;
-        }
-        // Regla 5: Retiros recientes
-        if (hasSignificantRecentWithdrawals(rut)) {
-            rulesMet++;
-        }
-        // Evaluar la capacidad de ahorro según la cantidad de reglas cumplidas
-        if (rulesMet == 5) {
-            return "Solid"; // Cumple con las 5 reglas
-        } else if (rulesMet >= 3) {
-            return "Moderate"; // Cumple con 3 o 4 reglas
-        } else {
-            return "Weak"; // Cumple con menos de 3 reglas
-        }
-    }
-
+    
 }

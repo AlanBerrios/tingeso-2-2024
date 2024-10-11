@@ -1,0 +1,4 @@
+package com.example.backendprestabanco.entities;
+
+public class SavingsAccountEntity {
+}

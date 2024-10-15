@@ -30,13 +30,15 @@ public class ClientControllerTest {
 
     @Test
     public void listClients_ShouldReturnClients() throws Exception {
-        ClientEntity client1 = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com", "123456789", 50000.0, "Good", 30, "Employee", 5);
-        ClientEntity client2 = new ClientEntity("98765432-1", "Beatriz", "Miranda", "beatriz@gmail.com", "987654321", 60000.0, "Good", 25, "Self-Employed", 3);
+        // given
+        ClientEntity client1 = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
+        ClientEntity client2 = new ClientEntity("98765432-1", "Beatriz", "Miranda", "beatriz@gmail.com", "987654321", 60000.0, "Good", 25, "Self-Employed", 3, "Clear", 0);
 
         List<ClientEntity> clientList = new ArrayList<>(Arrays.asList(client1, client2));
 
         given(clientService.getClients()).willReturn((ArrayList<ClientEntity>) clientList);
 
+        // when + then
         mockMvc.perform(get("/api/v1/clients/"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -47,10 +49,12 @@ public class ClientControllerTest {
 
     @Test
     public void getClientByRut_ShouldReturnClient() throws Exception {
-        ClientEntity client = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com", "123456789", 50000.0, "Good", 30, "Employee", 5);
+        // given
+        ClientEntity client = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
 
         given(clientService.getClientByRut("12345678-9")).willReturn(client);
 
+        // when + then
         mockMvc.perform(get("/api/v1/clients/{rut}", "12345678-9"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -59,7 +63,8 @@ public class ClientControllerTest {
 
     @Test
     public void saveClient_ShouldReturnSavedClient() throws Exception {
-        ClientEntity savedClient = new ClientEntity("17.777.457-8", "Esteban", "Marquez", "esteban@gmail.com", "123456789", 40000.0, "Fair", 35, "Employee", 10);
+        // given
+        ClientEntity savedClient = new ClientEntity("17.777.457-8", "Esteban", "Marquez", "esteban@gmail.com", "123456789", 40000.0, "Fair", 35, "Employee", 10, "Clear", 0);
 
         given(clientService.saveClient(Mockito.any(ClientEntity.class))).willReturn(savedClient);
 
@@ -74,10 +79,13 @@ public class ClientControllerTest {
                 "creditHistory": "Fair",
                 "age": 35,
                 "employmentType": "Employee",
-                "employmentSeniority": 10
+                "employmentSeniority": 10,
+                "historyStatus": "Clear",
+                "pendingDebts": 0
             }
             """;
 
+        // when + then
         mockMvc.perform(post("/api/v1/clients/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(clientJson))
@@ -87,7 +95,8 @@ public class ClientControllerTest {
 
     @Test
     public void updateClient_ShouldReturnUpdatedClient() throws Exception {
-        ClientEntity updatedClient = new ClientEntity("12.345.678-9", "Marco", "Jimenez", "marco@gmail.com", "987654321", 45000.0, "Good", 40, "Self-Employed", 15);
+        // given
+        ClientEntity updatedClient = new ClientEntity("12.345.678-9", "Marco", "Jimenez", "marco@gmail.com", "987654321", 45000.0, "Good", 40, "Self-Employed", 15, "Clear", 0);
 
         given(clientService.updateClient(Mockito.any(ClientEntity.class))).willReturn(updatedClient);
 
@@ -102,10 +111,13 @@ public class ClientControllerTest {
                 "creditHistory": "Good",
                 "age": 40,
                 "employmentType": "Self-Employed",
-                "employmentSeniority": 15
+                "employmentSeniority": 15,
+                "historyStatus": "Clear",
+                "pendingDebts": 0
             }
             """;
 
+        // when + then
         mockMvc.perform(put("/api/v1/clients/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(clientJson))
@@ -115,8 +127,10 @@ public class ClientControllerTest {
 
     @Test
     public void deleteClientByRut_ShouldReturn204() throws Exception {
+        // given
         given(clientService.deleteClient("12345678-9")).willReturn(true);
 
+        // when + then
         mockMvc.perform(delete("/api/v1/clients/{rut}", "12345678-9"))
                 .andExpect(status().isNoContent());
     }

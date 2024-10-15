@@ -1,14 +1,17 @@
 package com.example.backendprestabanco.services;
 
 import com.example.backendprestabanco.entities.RequestTrackingEntity;
+import com.example.backendprestabanco.enums.RequestStatusEnum;
 import com.example.backendprestabanco.repositories.RequestTrackingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Service
 public class RequestTrackingService {
+
    @Autowired
    RequestTrackingRepository requestTrackingRepository;
 
@@ -17,6 +20,7 @@ public class RequestTrackingService {
    }
 
    public RequestTrackingEntity saveRequestTracking(RequestTrackingEntity tracking) {
+      tracking.setLastUpdated(LocalDateTime.now()); // Establecer la fecha de actualización
       return requestTrackingRepository.save(tracking);
    }
 
@@ -24,7 +28,12 @@ public class RequestTrackingService {
       return requestTrackingRepository.findByRut(rut);
    }
 
-   public RequestTrackingEntity updateRequestTracking(RequestTrackingEntity tracking) {
+   // Actualizar el estado de la solicitud
+   public RequestTrackingEntity updateRequestStatus(String rut, RequestStatusEnum status, String comments) {
+      RequestTrackingEntity tracking = getRequestTrackingByRut(rut);
+      tracking.setStatus(status); // Actualizar el estado
+      tracking.setComments(comments); // Actualizar los comentarios si es necesario
+      tracking.setLastUpdated(LocalDateTime.now()); // Actualizar la fecha de modificación
       return requestTrackingRepository.save(tracking);
    }
 

@@ -16,4 +16,8 @@ public interface ClientRepository extends JpaRepository<ClientEntity, String> {
     // Query nativo para encontrar un cliente por su RUT
     @Query(value = "SELECT * FROM clients WHERE clients.rut = :rut", nativeQuery = true)
     ClientEntity findByRutNativeQuery(@Param("rut") String rut);
+
+    List<ClientEntity> findByIncomeGreaterThan(int i);
+
+    List<ClientEntity> findByEmploymentType(String s);
 }

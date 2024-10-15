@@ -71,8 +71,9 @@ public class CreditEvaluationService {
     // P4. R1 Relacion cuota/ingreso ------------------
     // Calcula el porcetentaje de la relacion cuota/ingreso
     public double feeIncomeRelation(double clientMonthlyIncome, double loanMonthlyPayment) {
-        return (clientMonthlyIncome / loanMonthlyPayment) * 100;
+        return (loanMonthlyPayment / clientMonthlyIncome) * 100;
     }
+
 
     // Decide si la relacion cuota ingreso es aceptable o no, comparandolo con 35
     public boolean feeIncomeRelationCondition(double clientMonthlyIncome, double loanMonthlyPayment) {
@@ -203,26 +204,42 @@ public class CreditEvaluationService {
 
         // Calcular el total de depósitos y verificar su regularidad
         for (AccountHistoryEntity deposit : deposits) {
-            totalDeposits += deposit.getTransactionAmount();
+            totalDeposits += deposit.getTransactionAmount(); // Sumar el monto del depósito
 
-            // Contar depósitos mensuales y trimestrales
             LocalDate transactionDate = deposit.getTransactionDate();
-            if (transactionDate.isAfter(twelveMonthsAgo.plusMonths(1))) {
+
+            // Contar depósitos mensuales (deben estar dentro del último mes respecto a la transacción)
+            if (transactionDate.isAfter(twelveMonthsAgo)) {
                 monthlyDepositCount++;
-            } else if (transactionDate.isAfter(twelveMonthsAgo.plusMonths(3))) {
+            }
+
+            // Contar depósitos trimestrales (dentro de los últimos 3 meses)
+            if (transactionDate.isAfter(twelveMonthsAgo.plusMonths(3))) {
                 quarterlyDepositCount++;
             }
         }
 
-        // Verificar si el cliente ha realizado al menos un depósito mensual o trimestral
+        // Verificar si el cliente ha realizado al menos 12 depósitos mensuales o 4 trimestrales
         boolean hasRegularDeposits = (monthlyDepositCount >= 12 || quarterlyDepositCount >= 4);
 
-        // Verificar si el total de depósitos cumple con el mínimo requerido (5% de los ingresos mensuales)
-        boolean meetsMinimumAmount = totalDeposits >= requiredDepositAmount * 12; // Para 12 meses
+        // Verificar si el total de depósitos cumple con el mínimo requerido (5% de los ingresos mensuales por 12 meses)
+        boolean meetsMinimumAmount = totalDeposits >= requiredDepositAmount * 12;
+
+        // Imprimir los valores verificados para hasRegularDeposits y meetsMinimumAmount
+        System.out.println("Contador de depósitos mensuales: " + monthlyDepositCount + " debe ser mayor o igual a: 12");
+        System.out.println("Contador de depósitos trimestrales: " + quarterlyDepositCount + " debe ser mayor o igual a: 4");
+        System.out.println("Total de depósitos: " + totalDeposits + " debe ser mayor o igual a: " + requiredDepositAmount * 12);
+
+        // Verificar si cumple ambas reglas
+        System.out.println("Regla 3 (Depósitos periódicos): " + hasRegularDeposits + " | " + meetsMinimumAmount);
 
         // Retornar verdadero solo si cumple ambas condiciones
         return hasRegularDeposits && meetsMinimumAmount;
     }
+
+
+
+
 
     // R7.4 Relación Saldo/Anios de Antiguedad
     // Función para verificar la relación saldo/años de antigüedad
@@ -280,27 +297,45 @@ public class CreditEvaluationService {
     // Función para evaluar la capacidad de ahorro del cliente según las 5 reglas
     public String evaluateSavingsCapacity(String rut, double loanAmount) {
         int rulesMet = 0;
+
         // Regla 1: Saldo mínimo requerido
-        if (hasMinimumRequiredBalance(rut, loanAmount)) {
+        boolean rule1 = hasMinimumRequiredBalance(rut, loanAmount);
+        System.out.println("Regla 1 (Saldo mínimo requerido): " + rule1);
+        if (rule1) {
             rulesMet++;
         }
+
         // Regla 2: Historial de ahorro consistente
-        if (hasConsistentSavingsHistory(rut)) {
+        boolean rule2 = hasConsistentSavingsHistory(rut);
+        System.out.println("Regla 2 (Historial de ahorro consistente): " + rule2);
+        if (rule2) {
             rulesMet++;
         }
+
         // Regla 3: Depósitos periódicos
-        if (hasRegularDeposits(rut)) {
+        boolean rule3 = hasRegularDeposits(rut);
+        System.out.println("Regla 3 (Depósitos periódicos): " + rule3);
+        if (rule3) {
             rulesMet++;
         }
+
         // Regla 4: Relación saldo/años de antigüedad
-        if (hasRequiredBalanceForTenure(rut, loanAmount)) {
+        boolean rule4 = hasRequiredBalanceForTenure(rut, loanAmount);
+        System.out.println("Regla 4 (Relación saldo/años de antigüedad): " + rule4);
+        if (rule4) {
             rulesMet++;
         }
+
         // Regla 5: Retiros recientes
-        if (hasSignificantRecentWithdrawals(rut)) {
+        boolean rule5 = hasSignificantRecentWithdrawals(rut);
+        System.out.println("Regla 5 (Retiros recientes): " + rule5);
+        if (rule5) {
             rulesMet++;
         }
+
         // Evaluar la capacidad de ahorro según la cantidad de reglas cumplidas
+        System.out.println("Reglas cumplidas: " + rulesMet + "/5");
+
         if (rulesMet == 5) {
             return "Solid"; // Cumple con las 5 reglas
         } else if (rulesMet >= 3) {
@@ -309,5 +344,6 @@ public class CreditEvaluationService {
             return "Weak"; // Cumple con menos de 3 reglas
         }
     }
+
 
 }

@@ -238,6 +238,9 @@ public class CreditEvaluationService {
     }
 
 
+
+
+
     // R7.4 Relación Saldo/Anios de Antiguedad
     // Función para verificar la relación saldo/años de antigüedad
     public boolean hasRequiredBalanceForTenure(String rut, double loanAmount) {

@@ -26,18 +26,12 @@ class CreditEvaluationServiceTest {
 
     @Mock
     private CreditEvaluationRepository creditEvaluationRepository;
-
     @Mock
     private ClientRepository clientRepository;
-
     @Mock
     private SavingsAccountRepository savingsAccountRepository;
-
     @Mock
     private AccountHistoryRepository accountHistoryRepository;
-
-    @Mock
-    private DebtRepository debtRepository;
 
     @Autowired
     private CreditEvaluationService creditEvaluationService;

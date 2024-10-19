@@ -27,4 +27,5 @@ public class ClientEntity {
     private Integer employmentSeniority; // Antigüedad en el empleo (años)
     private String historyStatus; // Estado de historial crediticio
     private Integer pendingDebts; // Cantidad de deudas pendientes
+
 }

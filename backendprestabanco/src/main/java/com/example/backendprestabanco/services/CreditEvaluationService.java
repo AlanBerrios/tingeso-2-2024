@@ -61,7 +61,7 @@ public class CreditEvaluationService {
         double monthlyPayment = (principal * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, totalPayments)) /
                 (Math.pow(1 + monthlyInterestRate, totalPayments) - 1);
 
-        return monthlyPayment; // Retornar la cuota mensual calculada
+        return Math.round(monthlyPayment); // Retornar la cuota mensual calculada
     }
 
     // P3. Registro de Credito ------------------

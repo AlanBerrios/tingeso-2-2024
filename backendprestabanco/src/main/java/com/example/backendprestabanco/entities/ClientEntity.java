@@ -19,6 +19,7 @@ public class ClientEntity {
     private String firstName; // Primer nombre del cliente
     private String lastName; // Apellido del cliente
     private String email; // Correo electrónico
+    private String password; // Clave de acceso
     private String phone; // Teléfono del cliente
     private Double income; // Ingresos del cliente
     private String creditHistory; // Historial crediticio

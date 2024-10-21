@@ -26,7 +26,7 @@ export default function ClientHeader() {
               <Link className="nav-link" to="/clientSingUp">Registrarse</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/simulateCredit">Simular Crédito</Link>
+              <Link className="nav-link" to="/clientSingIn">Iniciar Sesión</Link>
             </li>
           </ul>
         </div>

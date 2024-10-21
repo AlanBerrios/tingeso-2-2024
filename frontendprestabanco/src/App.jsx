@@ -6,8 +6,10 @@ import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import ClientHeader from './components/ClientHeader';
 import EjecHeader from './components/EjecHeader';
+import ClientJoinedHeader from './components/ClientJoinedHeader';
 import Home from './components/Home';
 import ClientHome from './components/ClientHome';
+import ClientJoinedHome from './components/ClientJoinedHome';
 import ClientList from './components/ClientList';
 import EjecHome from './components/EjecHome';
 import CreditSimulation from './components/CreditSimulation';
@@ -20,11 +22,27 @@ function App() {
 
   // Lógica para mostrar el encabezado correcto
   const renderHeader = () => {
-    if (location.pathname === '/clientView' || location.pathname === '/simulateCredit' || location.pathname === '/clientSingUp') {
+    if (
+      location.pathname === '/clientView' ||
+      location.pathname === '/clientSingUp' ||
+      location.pathname === '/clientSingIn'
+    ) {
       return <ClientHeader />;
-    } else if (location.pathname === '/ejecutiveView' || location.pathname === '/clientList' || location.pathname === '/userDocumentationRegister') {
-      return <EjecHeader />; 
+
+    } else if (
+      location.pathname === '/ejecutiveView' ||
+      location.pathname === '/clientList' ||
+      location.pathname === '/userDocumentationRegister'
+    ) {
+      return <EjecHeader />;
+
+    } else if (location.pathname === '/clientJoinedView' ||
+      location.pathname === '/simulateCredit'
+    ) {
+      return <ClientJoinedHeader />;
+
     }
+
     return <Header />;
   };
 
@@ -35,11 +53,12 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/clientView" element={<ClientHome />} />
         <Route path="/ejecutiveView" element={<EjecHome />} />
-        <Route path="/clientList" element={<ClientList />} />   
+        <Route path="/clientList" element={<ClientList />} />
         <Route path="/simulateCredit" element={<CreditSimulation />} />
         <Route path="/userDocumentationRegister" element={<UserDocumentationRegister />} />
         <Route path="/clientSingUp" element={<ClientSignUp />} />
         <Route path="/clientSingIn" element={<ClientSignIn />} />
+        <Route path="/clientJoinedView" element={<ClientJoinedHome />} />
       </Routes>
     </>
   );

@@ -36,7 +36,7 @@ export default function ClientSignIn() {
 
       setTimeout(() => {
         setIsLoading(false);
-        navigate("/JoinedClientView"); // Redirige después de 3 segundos
+        navigate("/clientJoinedView"); // Redirige después de 3 segundos
       }, 3000);
     } catch (error) {
       console.error(error);

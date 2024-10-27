@@ -1,7 +1,9 @@
 package com.example.backendprestabanco.services;
 
 import com.example.backendprestabanco.entities.CreditRequestEntity;
+import com.example.backendprestabanco.entities.MortgageLoanEntity;
 import com.example.backendprestabanco.repositories.CreditRequestRepository;
+import com.example.backendprestabanco.repositories.MortgageLoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,8 @@ import java.util.ArrayList;
 public class CreditRequestService {
     @Autowired
     CreditRequestRepository creditRequestRepository;
+    @Autowired
+    MortgageLoanRepository mortgageLoanRepository;
 
     public ArrayList<CreditRequestEntity> getCreditRequests() {
         return (ArrayList<CreditRequestEntity>) creditRequestRepository.findAll();

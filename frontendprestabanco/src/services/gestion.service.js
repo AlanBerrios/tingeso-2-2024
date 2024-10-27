@@ -20,6 +20,34 @@ function simulateCredit(principal, annualInterestRate, termInYears) {
   });
 }
 
+function feeIncomeRelation(clientMonthlyIncome, loanMonthlyPayment) {
+  return axios.get(`${CREDIT_EVALUATIONS_API_URL}fee-income-relation`, {
+    params: { clientMonthlyIncome, loanMonthlyPayment },
+  });
+}
+
+// Función para obtener el historial crediticio del cliente por su RUTfunction checkCreditHistory(rut) {
+function checkCreditHistory(rut) {
+    return axios.get(`${CREDIT_EVALUATIONS_API_URL}credit-history/${rut}`);
+}
+  
+function checkDebtIncomeRelation(rut) {
+  return axios.get(`${CREDIT_EVALUATIONS_API_URL}debt-income-relation/${rut}`);
+}
+
+function checkMaxFinancingAmount(loanType, loanAmount, propertyValue) {
+  return axios.get(`${CREDIT_EVALUATIONS_API_URL}max-financing-amount`, {
+    params: { loanType, loanAmount, propertyValue },
+  });
+}
+
+// Función para verificar la condición de edad
+function checkAgeCondition(rut, term) {
+  return axios.get(`${CREDIT_EVALUATIONS_API_URL}age-condition/${rut}`, {
+    params: { term }
+  });
+}
+
 // Funciones para clientes
 function createClient(client) {
   return axios.post(CLIENTS_API_URL, client);
@@ -158,8 +186,11 @@ function getMortgageLoans() {
 }
 
 function getMortgageLoanByRut(rut) {
-  return axios.get(`${MORTGAGE_LOANS_API_URL}${rut}`);
+  return axios.get(`${MORTGAGE_LOANS_API_URL}rut/${rut}`);
 }
+
+function getMortgageLoanById(id) {
+  return axios.get(`${MORTGAGE_LOANS_API_URL}id/${id}`);}
 
 function updateMortgageLoan(loan) {
   return axios.put(MORTGAGE_LOANS_API_URL, loan);
@@ -222,10 +253,16 @@ export default {
   createMortgageLoan,
   getMortgageLoans,
   getMortgageLoanByRut,
+  getMortgageLoanById,
   updateMortgageLoan,
   deleteMortgageLoan,
   createRequestTracking,
   getRequestTracking,
   updateRequestStatus,
   deleteRequestTracking,
+  feeIncomeRelation,
+  checkCreditHistory,
+  checkDebtIncomeRelation,
+  checkMaxFinancingAmount,
+  checkAgeCondition,
 };

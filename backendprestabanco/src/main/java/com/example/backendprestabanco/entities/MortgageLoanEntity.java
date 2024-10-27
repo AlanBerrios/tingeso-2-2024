@@ -15,8 +15,10 @@ import java.time.LocalDate;
 public class MortgageLoanEntity {
 
     @Id
-    @Column(unique = true, nullable = false)
-    private String rut; // Identificador único de cliente (RUT en vez de ID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String rut;
 
     private String loanType; // Tipo de préstamo (Ej. "Primera Vivienda", "Segunda Vivienda")
     private Double amount; // Monto del préstamo

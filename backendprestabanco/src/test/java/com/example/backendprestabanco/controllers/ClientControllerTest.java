@@ -31,8 +31,8 @@ public class ClientControllerTest {
     @Test
     public void listClients_ShouldReturnClients() throws Exception {
         // given
-        ClientEntity client1 = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
-        ClientEntity client2 = new ClientEntity("98765432-1", "Beatriz", "Miranda", "beatriz@gmail.com", "987654321", 60000.0, "Good", 25, "Self-Employed", 3, "Clear", 0);
+        ClientEntity client1 = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com", "password", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
+        ClientEntity client2 = new ClientEntity("98765432-1", "Beatriz", "Miranda", "beatriz@gmail.com", "contrasenia", "987654321", 60000.0, "Good", 25, "Self-Employed", 3, "Clear", 0);
 
         List<ClientEntity> clientList = new ArrayList<>(Arrays.asList(client1, client2));
 
@@ -50,7 +50,7 @@ public class ClientControllerTest {
     @Test
     public void getClientByRut_ShouldReturnClient() throws Exception {
         // given
-        ClientEntity client = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
+        ClientEntity client = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com","password", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
 
         given(clientService.getClientByRut("12345678-9")).willReturn(client);
 
@@ -64,7 +64,7 @@ public class ClientControllerTest {
     @Test
     public void saveClient_ShouldReturnSavedClient() throws Exception {
         // given
-        ClientEntity savedClient = new ClientEntity("17.777.457-8", "Esteban", "Marquez", "esteban@gmail.com", "123456789", 40000.0, "Fair", 35, "Employee", 10, "Clear", 0);
+        ClientEntity savedClient = new ClientEntity("17.777.457-8", "Esteban", "Marquez", "esteban@gmail.com","password", "123456789", 40000.0, "Fair", 35, "Employee", 10, "Clear", 0);
 
         given(clientService.saveClient(Mockito.any(ClientEntity.class))).willReturn(savedClient);
 
@@ -74,6 +74,7 @@ public class ClientControllerTest {
                 "firstName": "Esteban",
                 "lastName": "Marquez",
                 "email": "esteban@gmail.com",
+                "password": "password",
                 "phone": "123456789",
                 "income": 40000.0,
                 "creditHistory": "Fair",
@@ -96,7 +97,7 @@ public class ClientControllerTest {
     @Test
     public void updateClient_ShouldReturnUpdatedClient() throws Exception {
         // given
-        ClientEntity updatedClient = new ClientEntity("12.345.678-9", "Marco", "Jimenez", "marco@gmail.com", "987654321", 45000.0, "Good", 40, "Self-Employed", 15, "Clear", 0);
+        ClientEntity updatedClient = new ClientEntity("12.345.678-9", "Marco", "Jimenez", "marco@gmail.com","password", "987654321", 45000.0, "Good", 40, "Self-Employed", 15, "Clear", 0);
 
         given(clientService.updateClient(Mockito.any(ClientEntity.class))).willReturn(updatedClient);
 
@@ -106,6 +107,7 @@ public class ClientControllerTest {
                 "firstName": "Marco",
                 "lastName": "Jimenez",
                 "email": "marco@gmail.com",
+                "password": "password",
                 "phone": "987654321",
                 "income": 45000.0,
                 "creditHistory": "Good",

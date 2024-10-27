@@ -16,7 +16,9 @@ import java.time.LocalDateTime;
 public class RequestTrackingEntity {
 
     @Id
-    @Column(unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String rut; // Identificador único de cliente (RUT en vez de ID)
 
     @Enumerated(EnumType.STRING)

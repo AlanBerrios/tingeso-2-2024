@@ -16,6 +16,9 @@ import CreditSimulation from './components/CreditSimulation';
 import UserDocumentationRegister from './components/UserDocumentationRegister';
 import ClientSignUp from './components/ClientSignUp';
 import ClientSignIn from './components/ClientSignIn';
+import CreditRequest from './components/CreditRequest';
+import CreditEvaluation from './components/CreditEvaluation';
+import MortgageList from './components/MortgageList';
 
 function App() {
   const location = useLocation(); // Detecta la ruta actual
@@ -32,7 +35,10 @@ function App() {
     } else if (
       location.pathname === '/ejecutiveView' ||
       location.pathname === '/clientList' ||
-      location.pathname === '/userDocumentationRegister'
+      location.pathname === '/userDocumentationRegister' ||
+      location.pathname === '/creditRequest' ||
+      location.pathname === '/mortgageList' ||
+      location.pathname.startsWith('/creditEvaluation/')
     ) {
       return <EjecHeader />;
 
@@ -59,6 +65,9 @@ function App() {
         <Route path="/clientSingUp" element={<ClientSignUp />} />
         <Route path="/clientSingIn" element={<ClientSignIn />} />
         <Route path="/clientJoinedView" element={<ClientJoinedHome />} />
+        <Route path="/creditRequest" element={<CreditRequest />} />
+        <Route path="/mortgageList" element={<MortgageList />} />
+        <Route path="/creditEvaluation/:id" element={<CreditEvaluation />} />
       </Routes>
     </>
   );

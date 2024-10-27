@@ -75,12 +75,32 @@ public class CreditEvaluationController {
         return ResponseEntity.ok(isGood);
     }
 
+    // P4.4 Verificar Relación Deuda/Ingreso
+    @GetMapping("/debt-income-relation/{rut}")
+    public ResponseEntity<Boolean> checkDebtIncomeRelation(@PathVariable String rut) {
+        boolean isDebtIncomeAcceptable = creditEvaluationService.debtIncomeRelation(rut);
+        return ResponseEntity.ok(isDebtIncomeAcceptable);
+    }
+
+    @GetMapping("/max-financing-amount")
+    public ResponseEntity<Boolean> checkMaxFinancingAmount(
+            @RequestParam String loanType,
+            @RequestParam double loanAmount,
+            @RequestParam double propertyValue) {
+        boolean isWithinLimit = creditEvaluationService.maxFinancingAmountCondition(loanType, loanAmount, propertyValue);
+        return ResponseEntity.ok(isWithinLimit);
+    }
+
+
     // P4.6 Verificar edad del solicitante
     @GetMapping("/age-condition/{rut}")
-    public ResponseEntity<Boolean> checkAgeCondition(@PathVariable String rut) {
-        boolean isEligible = creditEvaluationService.clientAgeCondition(rut);
+    public ResponseEntity<Boolean> checkAgeCondition(
+            @PathVariable String rut,
+            @RequestParam int loanTermInMonths) {
+        boolean isEligible = creditEvaluationService.clientAgeCondition(rut, loanTermInMonths);
         return ResponseEntity.ok(isEligible);
     }
+
 
     // P4.7 Evaluar capacidad de ahorro
     @GetMapping("/savings-capacity/{rut}")

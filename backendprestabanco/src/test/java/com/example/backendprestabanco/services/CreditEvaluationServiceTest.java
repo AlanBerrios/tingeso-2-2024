@@ -58,7 +58,7 @@ public class CreditEvaluationServiceTest {
     public void whenSimulateCredit_thenReturnMonthlyPayment() {
         // Ejecutar y verificar
         double monthlyPayment = creditEvaluationService.simulateCredit(100000, 5, 30);
-        assertThat(monthlyPayment).isCloseTo(536.82, within(0.01)); // Tolerancia de 0.01
+        assertThat(monthlyPayment).isEqualTo(537.0);
     }
 
     @Test

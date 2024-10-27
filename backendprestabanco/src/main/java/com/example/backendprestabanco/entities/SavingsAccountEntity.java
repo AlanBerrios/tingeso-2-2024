@@ -16,6 +16,8 @@ public class SavingsAccountEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private Long accountId; // Identificador único de la cuenta de ahorros
 
     @Column(nullable = false)

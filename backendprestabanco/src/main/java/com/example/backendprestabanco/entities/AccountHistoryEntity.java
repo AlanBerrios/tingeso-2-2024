@@ -17,7 +17,7 @@ public class AccountHistoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long historyId; // Identificador único del historial de cuentas
+    private Long id;
 
     @Column(nullable = false)
     private String rut; // Identificador único del cliente (RUT)

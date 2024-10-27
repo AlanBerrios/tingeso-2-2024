@@ -36,4 +36,10 @@ public class MortgageLoanService {
             throw new Exception(e.getMessage());
         }
     }
+
+    public MortgageLoanEntity getMortgageLoanById(Long id) {
+        return mortgageLoanRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Mortgage loan not found"));
+    }
+
 }

@@ -21,10 +21,24 @@ public class MortgageLoanController {
         return ResponseEntity.ok(loans);
     }
 
-    @GetMapping("/{rut}")
+    @GetMapping("/id/{id}")
+    public ResponseEntity<MortgageLoanEntity> getMortgageLoanById(@PathVariable Long id) {
+        MortgageLoanEntity loan = mortgageLoanService.getMortgageLoanById(id);
+        if (loan != null) {
+            return ResponseEntity.ok(loan);
+        } else {
+            return ResponseEntity.notFound().build(); // Asegura un mensaje si no encuentra el préstamo
+        }
+    }
+
+    @GetMapping("/rut/{rut}")
     public ResponseEntity<MortgageLoanEntity> getMortgageLoanByRut(@PathVariable String rut) {
         MortgageLoanEntity loan = mortgageLoanService.getMortgageLoanByRut(rut);
-        return ResponseEntity.ok(loan);
+        if (loan != null) {
+            return ResponseEntity.ok(loan);
+        } else {
+            return ResponseEntity.notFound().build(); // Asegura un mensaje si no encuentra el préstamo
+        }
     }
 
     @PostMapping("/")

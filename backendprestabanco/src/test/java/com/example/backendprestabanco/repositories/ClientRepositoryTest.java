@@ -25,7 +25,7 @@ class ClientRepositoryTest {
     @Test
     public void whenFindByRut_thenReturnClient() {
         // given
-        ClientEntity client = new ClientEntity("12345678-9", "John", "Doe", "john.doe@gmail.com", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
+        ClientEntity client = new ClientEntity("12345678-9", "John", "Doe", "john.doe@gmail.com","password", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
         entityManager.persistAndFlush(client);
 
         // when
@@ -38,8 +38,8 @@ class ClientRepositoryTest {
     @Test
     public void whenFindByIncomeGreaterThan_thenReturnClients() {
         // given
-        ClientEntity client1 = new ClientEntity("12345678-9", "John", "Doe", "john.doe@gmail.com", "123456789", 30000.0, "Good", 30, "Employee", 5, "Clear", 0);
-        ClientEntity client2 = new ClientEntity("98765432-1", "Jane", "Doe", "jane.doe@gmail.com", "987654321", 60000.0, "Good", 25, "Employee", 3, "Clear", 0);
+        ClientEntity client1 = new ClientEntity("12345678-9", "John", "Doe", "john.doe@gmail.com","password", "123456789", 30000.0, "Good", 30, "Employee", 5, "Clear", 0);
+        ClientEntity client2 = new ClientEntity("98765432-1", "Jane", "Doe", "jane.doe@gmail.com","contrasenia", "987654321", 60000.0, "Good", 25, "Employee", 3, "Clear", 0);
         entityManager.persist(client1);
         entityManager.persist(client2);
         entityManager.flush();
@@ -54,8 +54,8 @@ class ClientRepositoryTest {
     @Test
     public void whenFindByEmploymentType_thenReturnClients() {
         // given
-        ClientEntity client1 = new ClientEntity("12345678-9", "John", "Doe", "john.doe@gmail.com", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
-        ClientEntity client2 = new ClientEntity("98765432-1", "Jane", "Doe", "jane.doe@gmail.com", "987654321", 60000.0, "Good", 25, "Self-Employed", 3, "Clear", 0);
+        ClientEntity client1 = new ClientEntity("12345678-9", "John", "Doe", "john.doe@gmail.com","password", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
+        ClientEntity client2 = new ClientEntity("98765432-1", "Jane", "Doe", "jane.doe@gmail.com","password", "987654321", 60000.0, "Good", 25, "Self-Employed", 3, "Clear", 0);
         entityManager.persist(client1);
         entityManager.persist(client2);
         entityManager.flush();

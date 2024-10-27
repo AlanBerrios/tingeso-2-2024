@@ -17,16 +17,10 @@ public class CreditRequestEntity {
     // CreditRequestEntity es la entidad que representa una solicitud de crédito
 
     @Id
-    @Column(unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String rut; // Identificador único de cliente (RUT en vez de ID)
-
-    @ManyToOne
-    @JoinColumn(name = "client_rut")
-    private ClientEntity client; // Relación con entidad cliente
-
-    @ManyToOne
-    @JoinColumn(name = "loan_rut")
-    private MortgageLoanEntity mortgageLoan; // Relación con entidad préstamo hipotecario
 
     private Double requestedAmount; // Monto solicitado por el cliente
     private String status; // Estado de la solicitud (Ej. "En Revisión", "Aprobada")

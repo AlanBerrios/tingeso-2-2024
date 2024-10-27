@@ -35,8 +35,8 @@ class ClientServiceTest {
     @Test
     public void whenGetClients_thenReturnClientList() {
         // given
-        ClientEntity client1 = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
-        ClientEntity client2 = new ClientEntity("98765432-1", "Beatriz", "Miranda", "beatriz@gmail.com", "987654321", 60000.0, "Good", 25, "Self-Employed", 3, "Clear", 0);
+        ClientEntity client1 = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com","password", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
+        ClientEntity client2 = new ClientEntity("98765432-1", "Beatriz", "Miranda", "beatriz@gmail.com","password", "987654321", 60000.0, "Good", 25, "Self-Employed", 3, "Clear", 0);
 
         List<ClientEntity> clientList = new ArrayList<>();
         clientList.add(client1);
@@ -55,7 +55,7 @@ class ClientServiceTest {
     @Test
     public void whenGetClientByRut_thenReturnClient() {
         // given
-        ClientEntity client = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
+        ClientEntity client = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com","password", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
         given(clientRepository.findByRut(client.getRut())).willReturn(client);
 
         // when
@@ -68,7 +68,7 @@ class ClientServiceTest {
     @Test
     public void whenSaveClient_thenReturnSavedClient() {
         // given
-        ClientEntity clientToSave = new ClientEntity("17.777.457-8", "Esteban", "Marquez", "esteban@gmail.com", "123456789", 40000.0, "Fair", 35, "Employee", 10, "Clear", 0);
+        ClientEntity clientToSave = new ClientEntity("17.777.457-8", "Esteban", "Marquez", "esteban@gmail.com","password", "123456789", 40000.0, "Fair", 35, "Employee", 10, "Clear", 0);
         given(clientRepository.save(clientToSave)).willReturn(clientToSave);
 
         // when
@@ -82,7 +82,7 @@ class ClientServiceTest {
     @Test
     public void whenUpdateClient_thenReturnUpdatedClient() {
         // given
-        ClientEntity clientToUpdate = new ClientEntity("12.345.678-9", "Marco", "Jimenez", "marco@gmail.com", "987654321", 45000.0, "Good", 40, "Self-Employed", 15, "Clear", 0);
+        ClientEntity clientToUpdate = new ClientEntity("12.345.678-9", "Marco", "Jimenez", "marco@gmail.com","password", "987654321", 45000.0, "Good", 40, "Self-Employed", 15, "Clear", 0);
         given(clientRepository.save(clientToUpdate)).willReturn(clientToUpdate);
 
         // when

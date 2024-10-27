@@ -77,7 +77,7 @@ public class CreditEvaluationService {
 
     // Decide si la relacion cuota ingreso es aceptable o no, comparandolo con 35
     public boolean feeIncomeRelationCondition(double clientMonthlyIncome, double loanMonthlyPayment) {
-        return feeIncomeRelation(clientMonthlyIncome, loanMonthlyPayment) < 35;
+        return feeIncomeRelation(clientMonthlyIncome, loanMonthlyPayment) <= 35;
     }
 
     // P4. R2 Historial crediticio del cliente ------------------
@@ -87,11 +87,12 @@ public class CreditEvaluationService {
         String creditHistoryStatus = client.getHistoryStatus();
         Integer pendingDebts = client.getPendingDebts();
         if (creditHistoryStatus.equals("Good") && pendingDebts == 0) {
-            return true;
+            return true;  // Debe devolver true si el historial es bueno y no hay deudas pendientes
         } else {
             return false;
         }
     }
+
 
     // P4. R3 Antiguedad laboral y estabilidad financiera ------------------
     // Antiguedad laboral del cliente y estabilidad financiera (creo que se tiene que mostrar esto en el frontend)
@@ -115,19 +116,52 @@ public class CreditEvaluationService {
         return debtIncomeRatio < 0.5;
     }
 
-    // P4. R5 Monto máximo del financiamiento ------------------
-    // Monto maximo del financiamiento (creo que se tiene que mostrar esto en el frontend)
+    // P4. R5 Monto máximo del financiamiento ------------------
+    // Verifica si el monto solicitado cumple con el máximo permitido según el tipo de préstamo
+    public boolean maxFinancingAmountCondition(String loanType, double loanAmount, double propertyValue) {
+        double maxPercentage;
+
+        // Asignar el porcentaje máximo según el tipo de préstamo
+        switch (loanType.toLowerCase()) {
+            case "primera vivienda":
+                maxPercentage = 0.80;
+                break;
+            case "segunda vivienda":
+                maxPercentage = 0.70;
+                break;
+            case "propiedades comerciales":
+                maxPercentage = 0.60;
+                break;
+            case "remodelación":
+                maxPercentage = 0.50;
+                break;
+            default:
+                throw new IllegalArgumentException("Tipo de préstamo no válido");
+        }
+
+        double maxAllowedAmount = propertyValue * maxPercentage;
+
+        // Retorna verdadero si el préstamo está dentro del límite permitido
+        return loanAmount <= maxAllowedAmount;
+    }
+
 
     // P4. R6 Edad del solicitante ------------------
-    // Metodo que verifica que el cliente no sea mayor a 70 anios
-    public boolean clientAgeCondition(String rut) {
+    // Metodo que verifica si el cliente puede cumplir con los pagos antes de los 75 años
+    public boolean clientAgeCondition(String rut, int loanTermInMonths) {
         ClientEntity client = clientRepository.findByRut(rut);
-        if (client.getAge() > 70) {
+        int currentAge = client.getAge();
+        int loanTermInYears = loanTermInMonths / 12; // Convertimos el plazo a años
+        int ageAtLoanEnd = currentAge + loanTermInYears;
+
+        // Verificamos si la edad al finalizar el préstamo excede los 75 años
+        if (ageAtLoanEnd > 75) {
             return false;
         } else {
             return true;
         }
     }
+
 
     // P4. R7 Capacidad de ahorro ---------------------------------------------------------------------
 

@@ -26,13 +26,13 @@ export default function EjecHeader() {
               <Link className="nav-link" to="/clientList">Lista de Clientes</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/userDocumentationRegister">Registrar Documentos de Cliente</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/creditRequest">Solicitar Crédito</Link>
-            </li>
-            <li className="nav-item">
               <Link className="nav-link" to="/mortgageList">Solicitudes de Crédito</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/savingCapacity">Capacidad de Ahorros</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/loanCostCalculate">Calcular Costo de Crédito</Link>
             </li>
           </ul>
         </div>

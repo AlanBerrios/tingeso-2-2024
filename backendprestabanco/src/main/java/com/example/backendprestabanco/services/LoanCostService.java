@@ -15,7 +15,6 @@ public class LoanCostService {
         return Math.round(result); // Redondear a la unidad más cercana
     }
 
-
     // Método para calcular el seguro de desgravamen
     public double calculateInsurance(double principal, double lifeInsuranceRate) {
         return Math.round(principal * lifeInsuranceRate);

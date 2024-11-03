@@ -16,14 +16,10 @@ import java.time.LocalTime;
 public class AccountHistoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(nullable = false)
     private String rut; // Identificador único del cliente (RUT)
-
-    @Column(nullable = false)
-    private Long accountId; // Identificador de la cuenta asociada
 
     private String accountType; // Tipo de cuenta (Ej. "Ahorros", "Inversiones")
     private String transactionType; // Tipo de movimiento (Ej. "Retiro", "Depósito")

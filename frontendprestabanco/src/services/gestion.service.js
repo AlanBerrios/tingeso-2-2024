@@ -7,16 +7,22 @@ const ACCOUNT_HISTORY_API_URL = `${BASE_URL}/account-history/`;
 const CREDIT_REQUESTS_API_URL = `${BASE_URL}/credit-requests/`;
 const DEBTS_API_URL = `${BASE_URL}/debts/`;
 const DOCUMENTATION_API_URL = `${BASE_URL}/documentation/`;
+const CLIENT_DOCUMENTS_API_URL = `${BASE_URL}/client-documents/`;
 const JOBS_API_URL = `${BASE_URL}/jobs/`;
-const LOAN_COST_API_URL = `${BASE_URL}/loan-costs/`;
+const LOAN_COST_API_URL = `${BASE_URL}/loan-cost/`;
 const MORTGAGE_LOANS_API_URL = `${BASE_URL}/mortgage-loans/`;
 const REQUEST_TRACKING_API_URL = `${BASE_URL}/request-tracking/`;
 const CREDIT_EVALUATIONS_API_URL = `${BASE_URL}/credit-evaluations/`;
 
-// Función para simular crédito hipotecario
 function simulateCredit(principal, annualInterestRate, termInYears) {
   return axios.get(`${CREDIT_EVALUATIONS_API_URL}simulate`, {
     params: { principal, annualInterestRate, termInYears },
+  });
+}
+
+function evaluateSavingsCapacity(rut, loanAmount) {
+  return axios.get(`${CREDIT_EVALUATIONS_API_URL}savings-capacity/${rut}`, {
+    params: { loanAmount },
   });
 }
 
@@ -26,11 +32,11 @@ function feeIncomeRelation(clientMonthlyIncome, loanMonthlyPayment) {
   });
 }
 
-// Función para obtener el historial crediticio del cliente por su RUTfunction checkCreditHistory(rut) {
+// Función para obtener el historial crediticio del cliente por su RUT
 function checkCreditHistory(rut) {
-    return axios.get(`${CREDIT_EVALUATIONS_API_URL}credit-history/${rut}`);
+  return axios.get(`${CREDIT_EVALUATIONS_API_URL}credit-history/${rut}`);
 }
-  
+
 function checkDebtIncomeRelation(rut) {
   return axios.get(`${CREDIT_EVALUATIONS_API_URL}debt-income-relation/${rut}`);
 }
@@ -44,8 +50,33 @@ function checkMaxFinancingAmount(loanType, loanAmount, propertyValue) {
 // Función para verificar la condición de edad
 function checkAgeCondition(rut, term) {
   return axios.get(`${CREDIT_EVALUATIONS_API_URL}age-condition/${rut}`, {
-    params: { term }
+    params: { term },
   });
+}
+
+// Funciones para documentos de clientes (subir y descargar)
+function uploadClientDocument(formData) {
+  return axios.post(`${CLIENT_DOCUMENTS_API_URL}upload`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
+
+function getClientDocumentsByRut(clientRut) {
+  return axios.get(`${CLIENT_DOCUMENTS_API_URL}by-client/${clientRut}`);
+}
+
+function downloadClientDocument(documentId) {
+  return axios.get(`${CLIENT_DOCUMENTS_API_URL}download/${documentId}`, {
+      responseType: 'blob' // Configura la respuesta como un blob para descargar archivos binarios
+  });
+}
+
+
+function deleteClientDocument(id) {
+  console.log(`Eliminando documento con ID: ${id}`);
+  return axios.delete(`${CLIENT_DOCUMENTS_API_URL}delete/${id}`);
 }
 
 // Funciones para clientes
@@ -189,12 +220,23 @@ function getMortgageLoanByRut(rut) {
   return axios.get(`${MORTGAGE_LOANS_API_URL}rut/${rut}`);
 }
 
+function getMortgageLoansByRut(rut) {
+  return axios.get(`${MORTGAGE_LOANS_API_URL}rut/${rut}`);
+}
+
+
 function getMortgageLoanById(id) {
-  return axios.get(`${MORTGAGE_LOANS_API_URL}id/${id}`);}
+  return axios.get(`${MORTGAGE_LOANS_API_URL}id/${id}`);
+}
 
 function updateMortgageLoan(loan) {
   return axios.put(MORTGAGE_LOANS_API_URL, loan);
 }
+
+function updateMortgageLoanStatus(id, status) {
+  return axios.put(`${MORTGAGE_LOANS_API_URL}${id}/status`, { status });
+}
+
 
 function deleteMortgageLoan(rut) {
   return axios.delete(`${MORTGAGE_LOANS_API_URL}${rut}`);
@@ -216,6 +258,62 @@ function updateRequestStatus(rut, status, comments) {
 function deleteRequestTracking(rut) {
   return axios.delete(`${REQUEST_TRACKING_API_URL}${rut}`);
 }
+
+function checkMinimumBalance(rut, loanAmount) {
+  return axios.get(`${CREDIT_EVALUATIONS_API_URL}savings-minimum-balance/${rut}`, {
+    params: { loanAmount },
+  });
+}
+
+function checkConsistentSavingsHistory(rut) {
+  return axios.get(`${CREDIT_EVALUATIONS_API_URL}consistent-savings-history/${rut}`);
+}
+
+function checkRegularDeposits(rut) {
+  return axios.get(`${CREDIT_EVALUATIONS_API_URL}regular-deposits/${rut}`);
+}
+
+function checkBalanceTenureRelation(rut, loanAmount) {
+  return axios.get(`${CREDIT_EVALUATIONS_API_URL}balance-tenure-relation/${rut}`, {
+    params: { loanAmount },
+  });
+}
+
+function checkRecentWithdrawals(rut) {
+  return axios.get(`${CREDIT_EVALUATIONS_API_URL}significant-recent-withdrawals/${rut}`);
+}
+
+// Funciones para el costo del préstamo
+function calculateMonthlyPayment(principal, annualInterestRate, termInYears) {
+  return axios.get(`${LOAN_COST_API_URL}monthly-payment`, {
+    params: { principal, annualInterestRate, termInYears },
+  });
+}
+
+function calculateInsurance(principal, lifeInsuranceRate) {
+  return axios.get(`${LOAN_COST_API_URL}insurance`, {
+    params: { principal, lifeInsuranceRate },
+  });
+}
+
+function calculateAdminFee(principal, adminFeeRate) {
+  return axios.get(`${LOAN_COST_API_URL}admin-fee`, {
+    params: { principal, adminFeeRate },
+  });
+}
+
+function calculateMonthlyCost(principal, annualInterestRate, termInYears, lifeInsuranceRate, fireInsuranceMont) {
+  return axios.get(`${LOAN_COST_API_URL}monthly-cost`, {
+    params: { principal, annualInterestRate, termInYears, lifeInsuranceRate, fireInsuranceMont },
+  });
+}
+
+function calculateTotalLoanCost(principal, termInYears, adminFeeRate, monthlyPayment) {
+  return axios.get(`${LOAN_COST_API_URL}total-loan-cost`, {
+    params: { principal, termInYears, adminFeeRate, monthlyPayment },
+  });
+}
+
 
 // Exportación predeterminada como un objeto
 export default {
@@ -265,4 +363,21 @@ export default {
   checkDebtIncomeRelation,
   checkMaxFinancingAmount,
   checkAgeCondition,
+  uploadClientDocument,
+  getClientDocumentsByRut,
+  downloadClientDocument,
+  deleteClientDocument, 
+  getMortgageLoansByRut, 
+  updateMortgageLoanStatus,
+  evaluateSavingsCapacity, 
+  checkMinimumBalance,
+  checkConsistentSavingsHistory,
+  checkRegularDeposits,
+  checkBalanceTenureRelation,
+  checkRecentWithdrawals,
+  calculateMonthlyPayment,
+  calculateInsurance,
+  calculateAdminFee,
+  calculateMonthlyCost,
+  calculateTotalLoanCost
 };

@@ -22,7 +22,20 @@ export default function MortgageList() {
   }, []);
 
   const handleEvaluate = (id) => {
-    navigate(`/creditEvaluation/${id}`); // Redirigir al componente de evaluación con el ID
+    navigate(`/creditEvaluation/${id}`);
+  };
+
+  const handleApprove = async (id) => {
+    try {
+      await gestionService.updateMortgageLoanStatus(id, "Aprobada");
+      setMortgages((prevMortgages) =>
+        prevMortgages.map((mortgage) =>
+          mortgage.id === id ? { ...mortgage, status: "Aprobada" } : mortgage
+        )
+      );
+    } catch (error) {
+      setError("Error al aprobar la solicitud.");
+    }
   };
 
   return (
@@ -52,8 +65,16 @@ export default function MortgageList() {
                 <button
                   className="btn btn-primary"
                   onClick={() => handleEvaluate(mortgage.id)}
+                  disabled={mortgage.status !== "En Evaluación"}
                 >
                   Evaluar
+                </button>
+                <button
+                  className="btn btn-success ms-2"
+                  onClick={() => handleApprove(mortgage.id)}
+                  disabled={mortgage.status !== "En Aprobación Final"}
+                >
+                  Aprobar
                 </button>
               </td>
             </tr>

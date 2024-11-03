@@ -25,6 +25,15 @@ export default function ClientJoinedHeader() {
             <li className="nav-item">
               <Link className="nav-link" to="/simulateCredit">Simular Crédito</Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/creditRequest">Solicitar Crédito</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/clientDocument">Mis Documentos</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/mortgageListForClient">Mis Solicitudes de Crédito</Link>
+            </li>
           </ul>
         </div>
       </div>

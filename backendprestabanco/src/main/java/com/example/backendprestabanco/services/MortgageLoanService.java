@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MortgageLoanService {
@@ -18,10 +19,6 @@ public class MortgageLoanService {
 
     public MortgageLoanEntity saveMortgageLoan(MortgageLoanEntity loan) {
         return mortgageLoanRepository.save(loan);
-    }
-
-    public MortgageLoanEntity getMortgageLoanByRut(String rut) {
-        return mortgageLoanRepository.findByRut(rut);
     }
 
     public MortgageLoanEntity updateMortgageLoan(MortgageLoanEntity loan) {
@@ -42,4 +39,15 @@ public class MortgageLoanService {
                 .orElseThrow(() -> new RuntimeException("Mortgage loan not found"));
     }
 
+    public List<MortgageLoanEntity> getMortgageLoansByRut(String rut) {
+        return mortgageLoanRepository.findAllByRut(rut);
+    }
+
+    public MortgageLoanEntity getMortgageLoanByRut(String rut) {
+        return mortgageLoanRepository.findByRut(rut);
+    }
+
+    public void updateMortgageLoanStatus(Long id, String status) {
+        mortgageLoanRepository.updateMortgageLoanStatus(id, status);
+    }
 }

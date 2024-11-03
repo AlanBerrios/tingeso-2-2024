@@ -28,7 +28,7 @@ class CreditEvaluationRepositoryTest {
     @Test
     public void whenFindByRut_thenReturnCreditEvaluation() {
         // given
-        CreditEvaluationEntity evaluation = new CreditEvaluationEntity("12345678-9", null, 0.3, "Good", 5, 0.2, true, "Approved", LocalDate.now());
+        CreditEvaluationEntity evaluation = new CreditEvaluationEntity(1L, "12345678-9", 0.3, "Good", 5, 0.2, true, "Approved", LocalDate.now());
         entityManager.persistAndFlush(evaluation);
 
         // when
@@ -41,7 +41,7 @@ class CreditEvaluationRepositoryTest {
     @Test
     public void whenFindByRutNativeQuery_thenReturnCreditEvaluation() {
         // given
-        CreditEvaluationEntity evaluation = new CreditEvaluationEntity("98765432-1", null, 0.4, "Bad", 3, 0.5, false, "Rejected", LocalDate.now());
+        CreditEvaluationEntity evaluation = new CreditEvaluationEntity(2L, "98765432-1", 0.4, "Bad", 3, 0.5, false, "Rejected", LocalDate.now());
         entityManager.persistAndFlush(evaluation);
 
         // when
@@ -55,8 +55,8 @@ class CreditEvaluationRepositoryTest {
     @Test
     public void whenFindByPaymentToIncomeRatioGreaterThan_thenReturnEvaluations() {
         // given
-        CreditEvaluationEntity evaluation1 = new CreditEvaluationEntity("12345678-9", null, 0.3, "Good", 5, 0.2, true, "Approved", LocalDate.now());
-        CreditEvaluationEntity evaluation2 = new CreditEvaluationEntity("98765432-1", null, 0.6, "Bad", 3, 0.5, false, "Rejected", LocalDate.now());
+        CreditEvaluationEntity evaluation1 = new CreditEvaluationEntity(1L, "12345678-9", 0.3, "Good", 5, 0.2, true, "Approved", LocalDate.now());
+        CreditEvaluationEntity evaluation2 = new CreditEvaluationEntity(2L, "98765432-1", 0.6, "Bad", 3, 0.5, false, "Rejected", LocalDate.now());
 
         entityManager.persist(evaluation1);
         entityManager.persist(evaluation2);
@@ -75,7 +75,7 @@ class CreditEvaluationRepositoryTest {
     @Test
     public void whenDeleteByRut_thenEvaluationShouldBeDeleted() {
         // given
-        CreditEvaluationEntity evaluation = new CreditEvaluationEntity("12345678-9", null, 0.3, "Good", 5, 0.2, true, "Approved", LocalDate.now());
+        CreditEvaluationEntity evaluation = new CreditEvaluationEntity(1L, "12345678-9", 0.3, "Good", 5, 0.2, true, "Approved", LocalDate.now());
         entityManager.persistAndFlush(evaluation);
 
         // when

@@ -1,5 +1,5 @@
 // src/components/CreditRequest.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import gestionService from "../services/gestion.service.js";
 import { useNavigate } from "react-router-dom";
 
@@ -36,10 +36,15 @@ export default function CreditRequest() {
     "Remodelación": ["incomeProof", "remodelingBudget", "updatedAppraisalCertificate"],
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setLoan((prevLoan) => ({ ...prevLoan, [name]: value }));
-  };
+  useEffect(() => {
+    const clientRut = localStorage.getItem("clientRut");
+    if (clientRut) {
+      setLoan((prevLoan) => ({ ...prevLoan, rut: clientRut }));
+      fetchDocumentation(clientRut);
+    } else {
+      setError("RUT de cliente no encontrado. Inicie sesión nuevamente.");
+    }
+  }, []);
 
   const handleLoanTypeChange = (e) => {
     const selectedType = loanTypes.find((type) => type.type === e.target.value);
@@ -58,9 +63,9 @@ export default function CreditRequest() {
     }));
   };
 
-  const fetchDocumentation = async () => {
+  const fetchDocumentation = async (rut) => {
     try {
-      const response = await gestionService.getDocumentationByRut(loan.rut);
+      const response = await gestionService.getDocumentationByRut(rut);
       setDocumentation(response.data);
     } catch (error) {
       setError("No se encontró la documentación para este RUT.");
@@ -74,6 +79,7 @@ export default function CreditRequest() {
 
   const handleSaveLoan = async (e) => {
     e.preventDefault();
+
     if (!documentation) {
       setError("Documentos no encontrados. Verifique el RUT.");
       return;
@@ -156,9 +162,7 @@ export default function CreditRequest() {
                 type="text"
                 className="form-control"
                 value={loan.rut}
-                onChange={handleInputChange}
-                onBlur={fetchDocumentation}
-                required
+                readOnly
               />
             </div>
 
@@ -189,7 +193,7 @@ export default function CreditRequest() {
                 type="number"
                 className="form-control"
                 value={loan.amount}
-                onChange={handleInputChange}
+                onChange={(e) => setLoan((prevLoan) => ({ ...prevLoan, amount: e.target.value }))}
                 required
               />
             </div>

@@ -1,11 +1,10 @@
-// src/components/ClientSignIn.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import gestionService from "../services/gestion.service.js";
 
 export default function ClientSignIn() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false); // Estado para el GIF de carga
+  const [isLoading, setIsLoading] = useState(false);
   const [credentials, setCredentials] = useState({ rut: "", password: "" });
   const [error, setError] = useState(null);
 
@@ -23,8 +22,7 @@ export default function ClientSignIn() {
     }
 
     try {
-      setIsLoading(true); // Mostrar GIF de carga
-
+      setIsLoading(true);
       const response = await gestionService.getClientByRut(credentials.rut);
       const client = response.data;
 
@@ -34,10 +32,13 @@ export default function ClientSignIn() {
         return;
       }
 
+      // Almacenar el RUT en el localStorage
+      localStorage.setItem("clientRut", credentials.rut);
+
       setTimeout(() => {
         setIsLoading(false);
-        navigate("/clientJoinedView"); // Redirige después de 3 segundos
-      }, 3000);
+        navigate("/clientJoinedView");
+      }, 1000);
     } catch (error) {
       console.error(error);
       setError("Error al iniciar sesión. Por favor, intente nuevamente.");
@@ -49,7 +50,6 @@ export default function ClientSignIn() {
     <div className="container mt-4">
       <h1>Inicio de Sesión de Cliente</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
-
       {isLoading ? (
         <div className="loading-container">
           <img

@@ -3,6 +3,7 @@ package com.example.backendprestabanco.controllers;
 import com.example.backendprestabanco.entities.CreditEvaluationEntity;
 import com.example.backendprestabanco.services.CreditEvaluationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -91,23 +92,57 @@ public class CreditEvaluationController {
         return ResponseEntity.ok(isWithinLimit);
     }
 
-
     // P4.6 Verificar edad del solicitante
     @GetMapping("/age-condition/{rut}")
-    public ResponseEntity<Boolean> checkAgeCondition(
-            @PathVariable String rut,
-            @RequestParam int loanTermInMonths) {
-        boolean isEligible = creditEvaluationService.clientAgeCondition(rut, loanTermInMonths);
+    public ResponseEntity<Boolean> checkAgeCondition(@PathVariable String rut) {
+        boolean isEligible = creditEvaluationService.clientAgeCondition(rut);
         return ResponseEntity.ok(isEligible);
     }
 
+    // P4.7 Reglas individuales de capacidad de ahorro
 
-    // P4.7 Evaluar capacidad de ahorro
+    @GetMapping("/savings-minimum-balance/{rut}")
+    public ResponseEntity<Boolean> checkMinimumBalance(@PathVariable String rut, @RequestParam double loanAmount) {
+        boolean result = creditEvaluationService.hasMinimumRequiredBalance(rut, loanAmount);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/consistent-savings-history/{rut}")
+    public ResponseEntity<Boolean> checkConsistentSavingsHistory(@PathVariable String rut) {
+        boolean result = creditEvaluationService.hasConsistentSavingsHistory(rut);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/regular-deposits/{rut}")
+    public ResponseEntity<Boolean> checkRegularDeposits(@PathVariable String rut) {
+        boolean result = creditEvaluationService.hasRegularDeposits(rut);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/balance-tenure-relation/{rut}")
+    public ResponseEntity<Boolean> checkBalanceTenureRelation(@PathVariable String rut, @RequestParam double loanAmount) {
+        boolean result = creditEvaluationService.hasRequiredBalanceForTenure(rut, loanAmount);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/significant-recent-withdrawals/{rut}")
+    public ResponseEntity<Boolean> checkRecentWithdrawals(@PathVariable String rut) {
+        boolean result = creditEvaluationService.hasSignificantRecentWithdrawals(rut);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/savings-capacity/{rut}")
-    public ResponseEntity<Map<String, String>> evaluateSavingsCapacity(@PathVariable String rut, @RequestParam double loanAmount) {
+    public ResponseEntity<Map<String, Object>> evaluateSavingsCapacity(@PathVariable String rut, @RequestParam double loanAmount) {
         String result = creditEvaluationService.evaluateSavingsCapacity(rut, loanAmount);
-        Map<String, String> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("result", result);
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
+        response.put("rules", Map.of(
+                "rule1", creditEvaluationService.hasMinimumRequiredBalance(rut, loanAmount),
+                "rule2", creditEvaluationService.hasConsistentSavingsHistory(rut),
+                "rule3", creditEvaluationService.hasRegularDeposits(rut),
+                "rule4", creditEvaluationService.hasRequiredBalanceForTenure(rut, loanAmount),
+                "rule5", creditEvaluationService.hasSignificantRecentWithdrawals(rut)
+        ));
+        return ResponseEntity.ok(response);
     }
 }

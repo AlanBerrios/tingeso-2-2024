@@ -31,8 +31,8 @@ public class CreditEvaluationControllerTest {
 
     @Test
     public void listCreditEvaluations_ShouldReturnCreditEvaluations() throws Exception {
-        CreditEvaluationEntity evaluation1 = new CreditEvaluationEntity("12345678-9", null, 0.3, "Good", 5, 0.2, true, "Approved", null);
-        CreditEvaluationEntity evaluation2 = new CreditEvaluationEntity("98765432-1", null, 0.4, "Bad", 2, 0.3, false, "Rejected", null);
+        CreditEvaluationEntity evaluation1 = new CreditEvaluationEntity(1L, "12345678-9", 0.3, "Good", 5, 0.2, true, "Approved", null);
+        CreditEvaluationEntity evaluation2 = new CreditEvaluationEntity(2L, "98765432-1", 0.4, "Bad", 2, 0.3, false, "Rejected", null);
 
         // Crear una lista de tipo ArrayList en lugar de Arrays.asList
         List<CreditEvaluationEntity> evaluations = new ArrayList<>(Arrays.asList(evaluation1, evaluation2));
@@ -64,7 +64,7 @@ public class CreditEvaluationControllerTest {
 
     @Test
     public void getCreditEvaluationByRut_ShouldReturnEvaluation() throws Exception {
-        CreditEvaluationEntity evaluation = new CreditEvaluationEntity("12345678-9", null, 0.3, "Good", 5, 0.2, true, "Approved", null);
+        CreditEvaluationEntity evaluation = new CreditEvaluationEntity(1L, "12345678-9", 0.3, "Good", 5, 0.2, true, "Approved", null);
         given(creditEvaluationService.getCreditEvaluationByRut("12345678-9")).willReturn(evaluation);
 
         mockMvc.perform(get("/api/v1/credit-evaluations/{rut}", "12345678-9"))

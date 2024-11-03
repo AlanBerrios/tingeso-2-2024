@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/mortgage-loans")
@@ -27,19 +28,27 @@ public class MortgageLoanController {
         if (loan != null) {
             return ResponseEntity.ok(loan);
         } else {
-            return ResponseEntity.notFound().build(); // Asegura un mensaje si no encuentra el préstamo
+            return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/rut/{rut}")
-    public ResponseEntity<MortgageLoanEntity> getMortgageLoanByRut(@PathVariable String rut) {
-        MortgageLoanEntity loan = mortgageLoanService.getMortgageLoanByRut(rut);
-        if (loan != null) {
-            return ResponseEntity.ok(loan);
+    public ResponseEntity<List<MortgageLoanEntity>> getMortgageLoansByRut(@PathVariable String rut) {
+        List<MortgageLoanEntity> loans = mortgageLoanService.getMortgageLoansByRut(rut);
+        if (loans != null && !loans.isEmpty()) {
+            return ResponseEntity.ok(loans);
         } else {
-            return ResponseEntity.notFound().build(); // Asegura un mensaje si no encuentra el préstamo
+            return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateMortgageLoanStatus(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String status = request.get("status");
+        mortgageLoanService.updateMortgageLoanStatus(id, status);
+        return ResponseEntity.ok().build();
+    }
+
 
     @PostMapping("/")
     public ResponseEntity<MortgageLoanEntity> saveMortgageLoan(@RequestBody MortgageLoanEntity loan) {

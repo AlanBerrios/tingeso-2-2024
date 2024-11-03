@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.IsoFields;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +67,6 @@ public class CreditEvaluationService {
 
     // P3. Registro de Credito ------------------
     // Metodo para registrar un credito
-
 
     // P4. R1 Relacion cuota/ingreso ------------------
     // Calcula el porcetentaje de la relacion cuota/ingreso
@@ -148,14 +148,12 @@ public class CreditEvaluationService {
 
     // P4. R6 Edad del solicitante ------------------
     // Metodo que verifica si el cliente puede cumplir con los pagos antes de los 75 años
-    public boolean clientAgeCondition(String rut, int loanTermInMonths) {
+    public boolean clientAgeCondition(String rut) {
         ClientEntity client = clientRepository.findByRut(rut);
         int currentAge = client.getAge();
-        int loanTermInYears = loanTermInMonths / 12; // Convertimos el plazo a años
-        int ageAtLoanEnd = currentAge + loanTermInYears;
 
         // Verificamos si la edad al finalizar el préstamo excede los 75 años
-        if (ageAtLoanEnd > 75) {
+        if (currentAge >= 75) {
             return false;
         } else {
             return true;
@@ -168,19 +166,17 @@ public class CreditEvaluationService {
     // R7.1 Saldo minimo requerido
     // Funcion para verificar si el cliente cumple con el saldo mínimo requerido
     public boolean hasMinimumRequiredBalance(String rut, double loanAmount) {
-        // Obtener la cuenta de ahorros del cliente por su RUT
         SavingsAccountEntity savingsAccount = savingsAccountRepository.findByRut(rut);
+        // Validación de existencia de cuenta
         if (savingsAccount == null) {
-            throw new RuntimeException("Cuenta de ahorros no encontrada para el cliente con RUT: " + rut);
+            System.out.println("Cuenta de ahorros no encontrada para el cliente con RUT: " + rut);
+            return false; // Devuelve false si no se encuentra la cuenta en lugar de lanzar una excepción
         }
-
-        // Verificar si el saldo es al menos el 10% del monto del préstamo
-        double requiredMinimumBalance = loanAmount * 0.10; // 10% del monto del préstamo
-        double currentBalance = savingsAccount.getBalance(); // Saldo actual de la cuenta de ahorros
-
-        // Retornar verdadero si el saldo cumple con el mínimo requerido, falso si no
+        double requiredMinimumBalance = loanAmount * 0.10;
+        double currentBalance = savingsAccount.getBalance();
         return currentBalance >= requiredMinimumBalance;
     }
+
 
     // R7.2 Historial de Ahorro Consistente
     // Función para verificar el historial de ahorro consistente durante los últimos 12 meses
@@ -231,6 +227,10 @@ public class CreditEvaluationService {
         // Obtener todos los depósitos de los últimos 12 meses
         List<AccountHistoryEntity> deposits = accountHistoryRepository.findByRutAndTransactionTypeAndTransactionDateAfter(
                 rut, "Depósito", twelveMonthsAgo);
+        // Print de la lista de depósitos
+        for (AccountHistoryEntity deposit : deposits) {
+            System.out.println("Rut: " + deposit.getRut() + ", Fecha: " + deposit.getTransactionDate() + ", Monto: " + deposit.getTransactionAmount());
+        }
 
         double totalDeposits = 0.0;
         int monthlyDepositCount = 0; // Contador de depósitos mensuales
@@ -260,6 +260,7 @@ public class CreditEvaluationService {
         boolean meetsMinimumAmount = totalDeposits >= requiredDepositAmount * 12;
 
         // Imprimir los valores verificados para hasRegularDeposits y meetsMinimumAmount
+        System.out.println("Número de depósitos encontrados: " + deposits.size());
         System.out.println("Contador de depósitos mensuales: " + monthlyDepositCount + " debe ser mayor o igual a: 12");
         System.out.println("Contador de depósitos trimestrales: " + quarterlyDepositCount + " debe ser mayor o igual a: 4");
         System.out.println("Total de depósitos: " + totalDeposits + " debe ser mayor o igual a: " + requiredDepositAmount * 12);
@@ -327,6 +328,8 @@ public class CreditEvaluationService {
     // R7.6 Resultado de la evaluación
     // Función para evaluar la capacidad de ahorro del cliente según las 5 reglas
     public String evaluateSavingsCapacity(String rut, double loanAmount) {
+        System.out.println("Evaluando capacidad de ahorro para RUT: " + rut + ", Monto de préstamo: " + loanAmount);
+
         int rulesMet = 0;
 
         // Regla 1: Saldo mínimo requerido

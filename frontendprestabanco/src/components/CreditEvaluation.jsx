@@ -3,31 +3,35 @@ import gestionService from "../services/gestion.service.js";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function CreditEvaluation() {
-  const { id } = useParams(); // Obtener el ID de la solicitud desde la URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [mortgage, setMortgage] = useState(null);
   const [clientIncome, setClientIncome] = useState(0);
   const [relation, setRelation] = useState(null);
   const [creditHistoryResult, setCreditHistoryResult] = useState(null);
   const [debtIncomeResult, setDebtIncomeResult] = useState(null);
-  const [workStability, setWorkStability] = useState(""); // Estado del select box
-  const [maxFinancingResult, setMaxFinancingResult] = useState(null); // Estado inicial
-  const [showMaxFinancingMessage, setShowMaxFinancingMessage] = useState(false); // Control de visualización
-  const [ageResult, setAgeResult] = useState(null); // Estado para la edad del solicitante
-  const [showAgeMessage, setShowAgeMessage] = useState(false); // Control de visualización de edad
+  const [workStability, setWorkStability] = useState("");
+  const [maxFinancingResult, setMaxFinancingResult] = useState(null);
+  const [ageResult, setAgeResult] = useState(null);
+  const [documentationResult, setDocumentationResult] = useState(null);
   const [evaluationResult, setEvaluationResult] = useState("");
   const [error, setError] = useState("");
 
-  // Cargar la solicitud de crédito por ID
   useEffect(() => {
     const fetchMortgage = async () => {
       try {
         const response = await gestionService.getMortgageLoanById(id);
         if (response.status === 200 && response.data) {
           setMortgage(response.data);
-
           const clientResponse = await gestionService.getClientByRut(response.data.rut);
           setClientIncome(clientResponse.data.income);
+
+          const documentationResponse = await gestionService.getDocumentationByRut(response.data.rut);
+          setDocumentationResult(documentationResponse.data.allDocumentsCompleted ? "Aprobado" : "Rechazado");
+
+          // Obtener la condición de edad antes de evaluar
+          const ageResponse = await gestionService.checkAgeCondition(response.data.rut, response.data.term);
+          setAgeResult(ageResponse.data);
         } else {
           setError("No se encontró la solicitud de crédito.");
         }
@@ -40,88 +44,48 @@ export default function CreditEvaluation() {
     fetchMortgage();
   }, [id]);
 
-  // Evaluar la solicitud según las reglas de negocio
   const evaluateLoan = async () => {
-    if (!mortgage || clientIncome === 0 || workStability === "") return;
+    if (!mortgage || clientIncome === 0 || workStability === "" || documentationResult === null) {
+      return;
+    }
 
     try {
       const monthlyPayment = mortgage.amount / mortgage.term;
 
-      const relationResponse = await gestionService.feeIncomeRelation(
-        clientIncome,
-        monthlyPayment
-      );
-      const calculatedRelation = relationResponse.data;
-      setRelation(calculatedRelation);
-
+      // Ejecutar llamadas asincrónicas de forma secuencial
+      const relationResponse = await gestionService.feeIncomeRelation(clientIncome, monthlyPayment);
       const creditHistoryResponse = await gestionService.checkCreditHistory(mortgage.rut);
-      setCreditHistoryResult(creditHistoryResponse.data);
-
       const debtIncomeResponse = await gestionService.checkDebtIncomeRelation(mortgage.rut);
-      setDebtIncomeResult(debtIncomeResponse.data);
-
       const maxFinancingResponse = await gestionService.checkMaxFinancingAmount(
         mortgage.loanType,
         mortgage.amount,
-        20000000 // Ejemplo del valor de la propiedad
+        20000000 // Ejemplo de valor de la propiedad
       );
+
+      // Actualizar estados de los resultados
+      setRelation(relationResponse.data);
+      setCreditHistoryResult(creditHistoryResponse.data);
+      setDebtIncomeResult(debtIncomeResponse.data);
       setMaxFinancingResult(maxFinancingResponse.data);
-      setShowMaxFinancingMessage(true); // Mostrar mensaje después de evaluación
 
-      const ageResponse = await gestionService.checkAgeCondition(
-        mortgage.rut,
-        mortgage.term
-      );
-      setAgeResult(ageResponse.data);
-      setShowAgeMessage(true); // Mostrar mensaje después de evaluación
-
-      const isApproved =
-        calculatedRelation <= 35 &&
+      // Verificar aprobación después de que todos los valores se hayan actualizado
+      const isApproved = relationResponse.data <= 35 &&
         creditHistoryResponse.data &&
         debtIncomeResponse.data &&
         workStability === "Aprobado" &&
         maxFinancingResponse.data &&
-        ageResponse.data;
+        ageResult &&
+        documentationResult === "Aprobado";
 
-      const result = isApproved ? "Aprobado" : "Rechazado";
+      const result = isApproved ? "Pre-Aprobada" : "Rechazado";
       setEvaluationResult(result);
 
-      await gestionService.updateMortgageLoan({
-        ...mortgage,
-        status: result,
-      });
+      // Actualizar estado del préstamo
+      await gestionService.updateMortgageLoan({ ...mortgage, status: result });
     } catch (error) {
       console.error("Error al evaluar la solicitud:", error);
       setError("Error al evaluar la solicitud.");
     }
-  };
-
-  const renderCreditHistoryMessage = () => {
-    if (creditHistoryResult === null) return "";
-    return creditHistoryResult
-      ? "Aprobado: Sin morosidad ni deudas impagas recientes."
-      : "Rechazado: Historial crediticio con morosidades o deudas pendientes.";
-  };
-
-  const renderDebtIncomeMessage = () => {
-    if (debtIncomeResult === null) return "";
-    return debtIncomeResult
-      ? "Aprobado: Relación deuda/ingreso menor al 50%."
-      : "Rechazado: Relación deuda/ingreso mayor al 50%.";
-  };
-
-  const renderMaxFinancingMessage = () => {
-    if (!showMaxFinancingMessage) return "";
-    return maxFinancingResult
-      ? "Aprobado: Monto dentro del límite permitido."
-      : "Rechazado: Monto excede el límite permitido.";
-  };
-
-  const renderAgeMessage = () => {
-    if (!showAgeMessage) return "";
-    return ageResult
-      ? "Aprobado: El cliente cumple con la condición de edad."
-      : "Rechazado: El cliente supera la edad permitida.";
   };
 
   return (
@@ -131,71 +95,99 @@ export default function CreditEvaluation() {
       {mortgage ? (
         <>
           <table className="table">
+            <thead>
+              <tr>
+                <th>Descripción</th>
+                <th>Valor</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
             <tbody>
               <tr>
                 <th>RUT</th>
                 <td>{mortgage.rut}</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <th>Documentación</th>
+                <td>
+                  <button
+                    className="btn btn-info"
+                    onClick={() => {
+                      localStorage.setItem("creditEvaluationId", id);
+                      navigate(`/documentationReview/${mortgage.rut}`);
+                    }}
+                  >
+                    Revisar Documentación
+                  </button>
+                </td>
+                <td style={{ color: documentationResult === "Aprobado" ? "green" : "red" }}>
+                  {documentationResult || "Pendiente"}
+                </td>
               </tr>
               <tr>
                 <th>Tipo de Préstamo</th>
                 <td>{mortgage.loanType}</td>
+                <td>-</td>
               </tr>
               <tr>
                 <th>Monto</th>
                 <td>${mortgage.amount.toLocaleString()}</td>
+                <td>-</td>
               </tr>
               <tr>
                 <th>Plazo</th>
                 <td>{mortgage.term} meses</td>
+                <td>-</td>
               </tr>
               <tr>
                 <th>Tasa de Interés</th>
                 <td>{mortgage.interestRate}%</td>
-              </tr>
-              <tr>
-                <th>Estado</th>
-                <td>{mortgage.status}</td>
+                <td>-</td>
               </tr>
               <tr>
                 <th>Ingreso Mensual del Cliente</th>
                 <td>${clientIncome.toLocaleString()}</td>
+                <td>-</td>
               </tr>
               <tr>
                 <th>Cuota Mensual Estimada</th>
                 <td>${(mortgage.amount / mortgage.term).toFixed(2)}</td>
+                <td>-</td>
               </tr>
               <tr>
                 <th>Resultado de Relación Cuota/Ingreso</th>
-                <td style={{ color: relation !== null && relation <= 35 ? "green" : "red" }}>
-                  {relation !== null
-                    ? relation <= 35
-                      ? "Aprobado, menor o igual al 35%"
-                      : "Rechazado, mayor al 35%"
-                    : ""}
+                <td>{relation !== null ? relation.toFixed(2) + "%" : ""}</td>
+                <td style={{ color: relation <= 35 ? "green" : "red" }}>
+                  {relation !== null && (relation <= 35 ? "Aprobado" : "Rechazado")}
                 </td>
               </tr>
               <tr>
                 <th>Historial Crediticio</th>
+                <td>{creditHistoryResult !== null ? (creditHistoryResult ? "Sin deudas recientes" : "Con deudas pendientes") : "-"}</td>
                 <td style={{ color: creditHistoryResult ? "green" : "red" }}>
-                  {renderCreditHistoryMessage()}
+                  {creditHistoryResult !== null && (creditHistoryResult ? "Aprobado" : "Rechazado")}
                 </td>
               </tr>
               <tr>
                 <th>Relación Deuda/Ingreso</th>
+                <td>{debtIncomeResult !== null ? (debtIncomeResult ? "< 50%" : "> 50%") : "-"}</td>
                 <td style={{ color: debtIncomeResult ? "green" : "red" }}>
-                  {renderDebtIncomeMessage()}
+                  {debtIncomeResult !== null && (debtIncomeResult ? "Aprobado" : "Rechazado")}
                 </td>
               </tr>
               <tr>
                 <th>Monto Máximo de Financiamiento</th>
+                <td>{maxFinancingResult !== null ? (maxFinancingResult ? "Dentro del límite" : "Excede el límite") : "-"}</td>
                 <td style={{ color: maxFinancingResult ? "green" : "red" }}>
-                  {renderMaxFinancingMessage()}
+                  {maxFinancingResult !== null && (maxFinancingResult ? "Aprobado" : "Rechazado")}
                 </td>
               </tr>
               <tr>
                 <th>Condición de Edad</th>
+                <td>{ageResult !== null ? (ageResult ? "Cumple la condición" : "No cumple") : "-"}</td>
                 <td style={{ color: ageResult ? "green" : "red" }}>
-                  {renderAgeMessage()}
+                  {ageResult !== null && (ageResult ? "Aprobado" : "Rechazado")}
                 </td>
               </tr>
               <tr>
@@ -211,27 +203,32 @@ export default function CreditEvaluation() {
                     <option value="Rechazado">Rechazado: Falta de estabilidad.</option>
                   </select>
                 </td>
+                <td style={{ color: workStability === "Aprobado" ? "green" : "red" }}>
+                  {workStability}
+                </td>
               </tr>
               <tr>
                 <th>Resultado</th>
-                <td style={{ color: evaluationResult === "Aprobado" ? "green" : "red" }}>
+                <td>-</td>
+                <td style={{ color: evaluationResult === "Pre-Aprobada" ? "green" : "red" }}>
                   {evaluationResult}
                 </td>
               </tr>
             </tbody>
           </table>
 
-          <button className="btn btn-success" onClick={evaluateLoan}>
-            Evaluar Solicitud
-          </button>
+          <div className="d-flex gap-3 mt-3">
+            <button className="btn btn-success" onClick={evaluateLoan} disabled={!documentationResult}>
+              Evaluar Solicitud
+            </button>
+            <button className="btn btn-secondary" onClick={() => navigate("/mortgageList")}>
+              Volver a la Lista
+            </button>
+          </div>
         </>
       ) : (
         <p>Cargando detalles de la solicitud...</p>
       )}
-
-      <button className="btn btn-secondary mt-3" onClick={() => navigate("/mortgageList")}>
-        Volver a la Lista
-      </button>
     </div>
   );
 }

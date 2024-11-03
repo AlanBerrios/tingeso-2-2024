@@ -4,27 +4,28 @@ import com.example.backendprestabanco.entities.CreditRequestEntity;
 import com.example.backendprestabanco.repositories.CreditRequestRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class CreditRequestServiceTest {
 
+    @InjectMocks
+    private CreditRequestService creditRequestService;
+
     @MockBean
     private CreditRequestRepository creditRequestRepository;
-
-    @Autowired
-    private CreditRequestService creditRequestService;
 
     @BeforeEach
     public void setup() {
@@ -54,6 +55,34 @@ class CreditRequestServiceTest {
     }
 
     @Test
+    void whenGetCreditRequestByRut_thenReturnRequest() {
+        String rut = "12345678-9";
+        CreditRequestEntity request = new CreditRequestEntity();
+        request.setRut(rut);
+
+        given(creditRequestRepository.findByRut(rut)).willReturn(request);
+
+        CreditRequestEntity result = creditRequestService.getCreditRequestByRut(rut);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getRut()).isEqualTo(rut);
+    }
+
+    @Test
+    void whenUpdateCreditRequest_thenReturnUpdatedRequest() {
+        CreditRequestEntity request = new CreditRequestEntity();
+        request.setRut("12345678-9");
+        request.setRequestedAmount(50000.0);
+
+        given(creditRequestRepository.save(request)).willReturn(request);
+
+        CreditRequestEntity result = creditRequestService.updateCreditRequest(request);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getRequestedAmount()).isEqualTo(50000.0);
+    }
+
+    @Test
     void whenDeleteCreditRequest_thenReturnTrue() throws Exception {
         String rut = "12345678-9";
         doNothing().when(creditRequestRepository).deleteByRut(rut);
@@ -61,6 +90,18 @@ class CreditRequestServiceTest {
         boolean result = creditRequestService.deleteCreditRequest(rut);
 
         assertThat(result).isTrue();
+        verify(creditRequestRepository, times(1)).deleteByRut(rut);
+    }
+
+    @Test
+    void whenDeleteCreditRequest_thenThrowExceptionIfDeletionFails() {
+        String rut = "12345678-9";
+        doThrow(new RuntimeException("Error al eliminar")).when(creditRequestRepository).deleteByRut(rut);
+
+        assertThatThrownBy(() -> creditRequestService.deleteCreditRequest(rut))
+                .isInstanceOf(Exception.class)
+                .hasMessageContaining("Error al eliminar");
+
         verify(creditRequestRepository, times(1)).deleteByRut(rut);
     }
 }

@@ -17,6 +17,7 @@ public class MortgageLoanService {
         return (ArrayList<MortgageLoanEntity>) mortgageLoanRepository.findAll();
     }
 
+
     public MortgageLoanEntity saveMortgageLoan(MortgageLoanEntity loan) {
         return mortgageLoanRepository.save(loan);
     }

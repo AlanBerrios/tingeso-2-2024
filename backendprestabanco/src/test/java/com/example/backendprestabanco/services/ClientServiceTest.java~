@@ -7,15 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -25,7 +24,7 @@ class ClientServiceTest {
     @MockBean
     private ClientRepository clientRepository;
 
-    @InjectMocks
+    @Autowired
     private ClientService clientService;
 
     @BeforeEach
@@ -36,8 +35,8 @@ class ClientServiceTest {
     @Test
     public void whenGetClients_thenReturnClientList() {
         // given
-        ClientEntity client1 = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com", "password", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
-        ClientEntity client2 = new ClientEntity("98765432-1", "Beatriz", "Miranda", "beatriz@gmail.com", "password", "987654321", 60000.0, "Good", 25, "Self-Employed", 3, "Clear", 0);
+        ClientEntity client1 = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com","password", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
+        ClientEntity client2 = new ClientEntity("98765432-1", "Beatriz", "Miranda", "beatriz@gmail.com","password", "987654321", 60000.0, "Good", 25, "Self-Employed", 3, "Clear", 0);
 
         List<ClientEntity> clientList = new ArrayList<>();
         clientList.add(client1);
@@ -56,7 +55,7 @@ class ClientServiceTest {
     @Test
     public void whenGetClientByRut_thenReturnClient() {
         // given
-        ClientEntity client = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com", "password", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
+        ClientEntity client = new ClientEntity("12345678-9", "Alex", "Garcia", "alex@gmail.com","password", "123456789", 50000.0, "Good", 30, "Employee", 5, "Clear", 0);
         given(clientRepository.findByRut(client.getRut())).willReturn(client);
 
         // when
@@ -69,7 +68,7 @@ class ClientServiceTest {
     @Test
     public void whenSaveClient_thenReturnSavedClient() {
         // given
-        ClientEntity clientToSave = new ClientEntity("17.777.457-8", "Esteban", "Marquez", "esteban@gmail.com", "password", "123456789", 40000.0, "Fair", 35, "Employee", 10, "Clear", 0);
+        ClientEntity clientToSave = new ClientEntity("17.777.457-8", "Esteban", "Marquez", "esteban@gmail.com","password", "123456789", 40000.0, "Fair", 35, "Employee", 10, "Clear", 0);
         given(clientRepository.save(clientToSave)).willReturn(clientToSave);
 
         // when
@@ -83,7 +82,7 @@ class ClientServiceTest {
     @Test
     public void whenUpdateClient_thenReturnUpdatedClient() {
         // given
-        ClientEntity clientToUpdate = new ClientEntity("12.345.678-9", "Marco", "Jimenez", "marco@gmail.com", "password", "987654321", 45000.0, "Good", 40, "Self-Employed", 15, "Clear", 0);
+        ClientEntity clientToUpdate = new ClientEntity("12.345.678-9", "Marco", "Jimenez", "marco@gmail.com","password", "987654321", 45000.0, "Good", 40, "Self-Employed", 15, "Clear", 0);
         given(clientRepository.save(clientToUpdate)).willReturn(clientToUpdate);
 
         // when
@@ -105,30 +104,5 @@ class ClientServiceTest {
         // then
         assertThat(isDeleted).isTrue();
         verify(clientRepository, times(1)).deleteByRut(rut);
-    }
-
-    @Test
-    public void whenDeleteClientThrowsException_thenThrowsException() {
-        // given
-        String rut = "12345678-9";
-        doThrow(new RuntimeException("Error al eliminar el cliente")).when(clientRepository).deleteByRut(rut);
-
-        // then
-        assertThatThrownBy(() -> clientService.deleteClient(rut))
-                .isInstanceOf(Exception.class)
-                .hasMessageContaining("Error al eliminar el cliente");
-    }
-
-    @Test
-    public void whenGetClientByNonExistingRut_thenReturnNull() {
-        // given
-        String nonExistingRut = "11111111-1";
-        given(clientRepository.findByRut(nonExistingRut)).willReturn(null);
-
-        // when
-        ClientEntity foundClient = clientService.getClientByRut(nonExistingRut);
-
-        // then
-        assertThat(foundClient).isNull();
     }
 }

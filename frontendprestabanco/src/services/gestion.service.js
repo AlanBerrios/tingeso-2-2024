@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "prestabanco-app-alan.brazilsouth.cloudapp.azure.com/api";
+const BASE_URL = "http://prestabanco-app-alan.brazilsouth.cloudapp.azure.com/api/v1";
 const CLIENTS_API_URL = `${BASE_URL}/clients/`;
 const SAVINGS_ACCOUNTS_API_URL = `${BASE_URL}/savings-accounts/`;
 const ACCOUNT_HISTORY_API_URL = `${BASE_URL}/account-history/`;

@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,6 +15,7 @@ import static org.mockito.BDDMockito.given;
 
 // @SpringBootTest para cargar el contexto de Spring
 @SpringBootTest
+@ActiveProfiles("test")
 class LoanCostServiceTest {
 
     // Inyectamos el servicio para probar sus métodos sin necesidad de mocks para los servicios

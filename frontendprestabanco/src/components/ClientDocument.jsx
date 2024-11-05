@@ -66,26 +66,38 @@ export default function ClientDocument() {
   const handleUpload = async (e, documentType) => {
     const file = e.target.files[0];
     if (!file) return;
-
+  
     const formData = new FormData();
     formData.append("file", file);
     formData.append("clientRut", clientRut);
     formData.append("documentType", documentType);
-
+  
     try {
       setUploadError("");
       setUploadSuccess("");
-      await gestionService.uploadClientDocument(formData);
-      setUploadSuccess("Documento subido exitosamente.");
-      setDocumentation((prevDocumentation) => ({
-        ...prevDocumentation,
-        [documentType]: true,
-      }));
-      fetchClientDocuments(clientRut);
+      // Subir documento y obtener respuesta
+      const response = await gestionService.uploadClientDocument(formData);
+  
+      // Verificar si la respuesta confirma la actualización del estado del documento
+      if (response.status === 200) {
+        setUploadSuccess("Documento subido exitosamente.");
+        
+        // Refrescar el estado de documentación con el valor actualizado
+        setDocumentation((prevDocumentation) => ({
+          ...prevDocumentation,
+          [documentType]: true, // Marcar como entregado
+        }));
+        
+        // Refrescar la lista de documentos del cliente para reflejar la nueva subida
+        fetchClientDocuments(clientRut);
+      } else {
+        setUploadError("Error al subir el documento.");
+      }
     } catch (err) {
       setUploadError("Error al subir el documento.");
     }
   };
+  
 
   const handleDelete = async (documentId, documentType) => {
     try {

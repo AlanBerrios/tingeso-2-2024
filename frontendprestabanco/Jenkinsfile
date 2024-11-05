@@ -14,7 +14,7 @@ pipeline{
             steps{
                 dir("frontendprestabanco"){
                     script{
-                         withDockerRegistry(credentialsId: 'docker-hub-credentials'){
+                         withDockerRegistry(credentialsId: 'docker-credentials'){
                             bat "docker build -t alanberrios/prestabancofrontend-image ."
                             bat "docker push alanberrios/prestabancofrontend-image"
                         }

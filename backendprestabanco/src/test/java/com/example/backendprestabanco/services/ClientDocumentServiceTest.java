@@ -1,7 +1,9 @@
 package com.example.backendprestabanco.services;
 
 import com.example.backendprestabanco.entities.ClientDocumentEntity;
+import com.example.backendprestabanco.entities.DocumentationEntity;
 import com.example.backendprestabanco.repositories.ClientDocumentRepository;
+import com.example.backendprestabanco.repositories.DocumentationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,6 +36,9 @@ class ClientDocumentServiceTest {
     @Mock
     private ClientDocumentRepository clientDocumentRepository;
 
+    @Mock
+    private DocumentationRepository documentationRepository;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -43,8 +48,13 @@ class ClientDocumentServiceTest {
     void whenSaveDocument_thenDocumentIsSaved() throws IOException {
         // Given
         String clientRut = "12345678-9";
-        String documentType = "ID";
+        String documentType = "incomeProof";
         MockMultipartFile file = new MockMultipartFile("file", "document.pdf", "application/pdf", "dummy content".getBytes());
+
+        // Mock the documentation and client document entities
+        DocumentationEntity documentation = new DocumentationEntity();
+        documentation.setRut(clientRut);
+        given(documentationRepository.findByRut(clientRut)).willReturn(documentation);
 
         ClientDocumentEntity document = new ClientDocumentEntity();
         document.setClientRut(clientRut);
@@ -64,6 +74,7 @@ class ClientDocumentServiceTest {
         assertThat(savedDocument.getDocumentType()).isEqualTo(documentType);
         assertThat(savedDocument.getDocumentName()).isEqualTo("document.pdf");
         verify(clientDocumentRepository, times(1)).save(any(ClientDocumentEntity.class));
+        verify(documentationRepository, times(1)).save(documentation);
     }
 
     @Test

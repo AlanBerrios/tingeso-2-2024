@@ -1,3 +1,4 @@
+// ClientDocument.jsx
 import React, { useState, useEffect } from "react";
 import gestionService from "../services/gestion.service.js";
 
@@ -75,21 +76,12 @@ export default function ClientDocument() {
     try {
       setUploadError("");
       setUploadSuccess("");
-      // Subir documento y obtener respuesta
       const response = await gestionService.uploadClientDocument(formData);
   
-      // Verificar si la respuesta confirma la actualización del estado del documento
       if (response.status === 200) {
         setUploadSuccess("Documento subido exitosamente.");
-        
-        // Refrescar el estado de documentación con el valor actualizado
-        setDocumentation((prevDocumentation) => ({
-          ...prevDocumentation,
-          [documentType]: true, // Marcar como entregado
-        }));
-        
-        // Refrescar la lista de documentos del cliente para reflejar la nueva subida
-        fetchClientDocuments(clientRut);
+        fetchDocumentationStatus(clientRut);  // Refresh the documentation state after upload
+        fetchClientDocuments(clientRut);  // Refresh the client documents
       } else {
         setUploadError("Error al subir el documento.");
       }
@@ -97,7 +89,6 @@ export default function ClientDocument() {
       setUploadError("Error al subir el documento.");
     }
   };
-  
 
   const handleDelete = async (documentId, documentType) => {
     try {

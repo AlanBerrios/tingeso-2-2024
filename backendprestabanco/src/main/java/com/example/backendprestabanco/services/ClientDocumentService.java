@@ -28,23 +28,31 @@ public class ClientDocumentService {
             throw new IllegalArgumentException("El archivo está vacío o no es válido.");
         }
 
-        // Guardar el documento en ClientDocumentEntity
+        // Save the document
         ClientDocumentEntity document = new ClientDocumentEntity();
         document.setClientRut(clientRut);
         document.setDocumentType(documentType);
         document.setDocumentName(file.getOriginalFilename());
         document.setDocumentData(file.getBytes());
         document.setUploadDate(new Date());
-
         clientDocumentRepository.save(document);
 
-        // Actualizar el estado del documento a "Entregado" en DocumentationEntity
-        DocumentationEntity documentation = documentationRepository.findByRut(clientRut);
-        if (documentation != null) {
-            setDocumentStatus(documentation, documentType, true);
+        // Update the corresponding field in DocumentationEntity
+        Optional<DocumentationEntity> documentationOpt = documentationRepository.findById(clientRut);
+        if (documentationOpt.isPresent()) {
+            DocumentationEntity documentation = documentationOpt.get();
+            switch (documentType) {
+                case "incomeProof" -> documentation.setIncomeProof(true);
+                case "appraisalCertificate" -> documentation.setAppraisalCertificate(true);
+                case "creditHistory" -> documentation.setCreditHistory(true);
+                case "firstPropertyDeed" -> documentation.setFirstPropertyDeed(true);
+                case "businessFinancialStatement" -> documentation.setBusinessFinancialStatement(true);
+                case "businessPlan" -> documentation.setBusinessPlan(true);
+                case "remodelingBudget" -> documentation.setRemodelingBudget(true);
+                case "updatedAppraisalCertificate" -> documentation.setUpdatedAppraisalCertificate(true);
+            }
             documentationRepository.save(documentation);
         }
-
         return document;
     }
 

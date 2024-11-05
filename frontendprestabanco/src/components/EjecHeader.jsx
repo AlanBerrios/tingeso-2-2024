@@ -12,11 +12,11 @@ export default function EjecHeader() {
         left: 0, 
         width: '100%', 
         zIndex: 1000, 
-        backgroundColor: '#FFDD00'  // Amarillo para el ejecutivo
+        backgroundColor: '#ff0000'  // Amarillo para el ejecutivo
       }}
     >
       <div className="container-fluid">
-        <a className="navbar-brand" href="/">PrestaBanco - Ejecutivo</a>
+        <a className="navbar-brand" href="/">PrestaBanco - Ejecutivo ola</a>
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav">
             <li className="nav-item">

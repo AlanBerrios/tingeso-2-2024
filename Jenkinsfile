@@ -28,8 +28,8 @@ pipeline{
                 dir("backendprestabanco"){
                     script{
                         withDockerRegistry(credentialsId: 'docker-credentials'){
-                            bat "docker build -t alanberrios/prestabancobackend-image ."
-                            bat "docker push alanberrios/prestabancobackend-image"
+                            bat "docker build -t alanberrios/prestabancobackend-image:latest ."
+                            bat "docker push alanberrios/prestabancobackend-image:latest"
                         }
                     }
                 }

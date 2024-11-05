@@ -5,7 +5,7 @@ const EjecHome = () => {
   return (
     <div className="container mt-5">
       <h1>Bienvenido, Ejecutivo</h1>
-      <p>Aquí puedes gestionar la lista de clientes y ver sus detalles.</p>
+      <p>Aquí puedes gestionar la lista de clientes y ver sus detalles.WUJUUJUJU</p>
       <p>Selecciona una opción del menú para continuar.</p>
     </div>
   );

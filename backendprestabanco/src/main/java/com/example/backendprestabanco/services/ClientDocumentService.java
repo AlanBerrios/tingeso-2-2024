@@ -1,8 +1,8 @@
 package com.example.backendprestabanco.services;
 
 import com.example.backendprestabanco.entities.ClientDocumentEntity;
-import com.example.backendprestabanco.repositories.ClientDocumentRepository;
 import com.example.backendprestabanco.entities.DocumentationEntity;
+import com.example.backendprestabanco.repositories.ClientDocumentRepository;
 import com.example.backendprestabanco.repositories.DocumentationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,10 +12,12 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.logging.Logger;
 
 @Service
 public class ClientDocumentService {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientDocumentService.class.getName());
 
     @Autowired
     private ClientDocumentRepository clientDocumentRepository;
@@ -37,28 +39,27 @@ public class ClientDocumentService {
         document.setUploadDate(new Date());
         clientDocumentRepository.save(document);
 
+        LOGGER.info("Document uploaded successfully, attempting to update DocumentationEntity.");
+
         // Update the corresponding field in DocumentationEntity
         Optional<DocumentationEntity> documentationOpt = documentationRepository.findById(clientRut);
         if (documentationOpt.isPresent()) {
             DocumentationEntity documentation = documentationOpt.get();
-            switch (documentType) {
-                case "incomeProof" -> documentation.setIncomeProof(true);
-                case "appraisalCertificate" -> documentation.setAppraisalCertificate(true);
-                case "creditHistory" -> documentation.setCreditHistory(true);
-                case "firstPropertyDeed" -> documentation.setFirstPropertyDeed(true);
-                case "businessFinancialStatement" -> documentation.setBusinessFinancialStatement(true);
-                case "businessPlan" -> documentation.setBusinessPlan(true);
-                case "remodelingBudget" -> documentation.setRemodelingBudget(true);
-                case "updatedAppraisalCertificate" -> documentation.setUpdatedAppraisalCertificate(true);
-            }
+            LOGGER.info("DocumentationEntity found for RUT: " + clientRut);
+
+            // Update the field based on document type
+            setDocumentStatus(documentation, documentType, true);
+
+            // Save updated DocumentationEntity
             documentationRepository.save(documentation);
+            LOGGER.info("Updated DocumentationEntity saved for documentType: " + documentType);
         } else {
+            LOGGER.warning("No DocumentationEntity found for RUT: " + clientRut);
             throw new RuntimeException("No DocumentationEntity found for RUT: " + clientRut);
         }
         return document;
     }
 
-    // Método para actualizar el campo correspondiente en DocumentationEntity
     private void setDocumentStatus(DocumentationEntity documentation, String documentType, boolean status) {
         switch (documentType) {
             case "incomeProof":
@@ -88,8 +89,8 @@ public class ClientDocumentService {
             default:
                 throw new IllegalArgumentException("Tipo de documento no reconocido: " + documentType);
         }
-        // Actualiza `allDocumentsCompleted` si es necesario
         documentation.setAllDocumentsCompleted(checkIfAllDocumentsCompleted(documentation));
+        LOGGER.info("Set documentType " + documentType + " to " + status + " in DocumentationEntity.");
     }
 
     private boolean checkIfAllDocumentsCompleted(DocumentationEntity documentation) {
@@ -103,12 +104,12 @@ public class ClientDocumentService {
                 Boolean.TRUE.equals(documentation.getUpdatedAppraisalCertificate());
     }
 
-    public List<ClientDocumentEntity> getDocumentsByClientRut(String clientRut) {
-        return clientDocumentRepository.findByClientRut(clientRut);
-    }
-
     public Optional<ClientDocumentEntity> getDocumentById(Long id) {
         return clientDocumentRepository.findById(id);
+    }
+
+    public List<ClientDocumentEntity> getDocumentsByClientRut(String clientRut) {
+        return clientDocumentRepository.findByClientRut(clientRut);
     }
 
     public void deleteDocument(Long id) {

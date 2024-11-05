@@ -75,18 +75,27 @@ export default function ClientDocument() {
     try {
       setUploadError("");
       setUploadSuccess("");
-
       const response = await gestionService.uploadClientDocument(formData);
 
       if (response.status === 200) {
         setUploadSuccess("Documento subido exitosamente.");
 
-        // Update only the specific document type to "Entregado" without reloading all documents
-        setDocumentation((prevDocumentation) => ({
-          ...prevDocumentation,
-          [documentType]: true,
-        }));
-        fetchClientDocuments(clientRut);
+        // Fetch latest document data for the specific document type
+        fetchDocumentationStatus(clientRut);
+        
+        // Update the file name and the document status immediately
+        setClientDocuments((prevDocuments) => {
+          const updatedDocuments = prevDocuments.map((doc) =>
+            doc.documentType === documentType
+              ? { ...doc, documentName: file.name }
+              : doc
+          );
+          // If it's a new document, add it to the list
+          if (!updatedDocuments.some((doc) => doc.documentType === documentType)) {
+            updatedDocuments.push({ documentType, documentName: file.name });
+          }
+          return updatedDocuments;
+        });
       } else {
         setUploadError("Error al subir el documento.");
       }

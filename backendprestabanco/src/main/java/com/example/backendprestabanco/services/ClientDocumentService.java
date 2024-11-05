@@ -52,6 +52,8 @@ public class ClientDocumentService {
                 case "updatedAppraisalCertificate" -> documentation.setUpdatedAppraisalCertificate(true);
             }
             documentationRepository.save(documentation);
+        } else {
+            throw new RuntimeException("No DocumentationEntity found for RUT: " + clientRut);
         }
         return document;
     }

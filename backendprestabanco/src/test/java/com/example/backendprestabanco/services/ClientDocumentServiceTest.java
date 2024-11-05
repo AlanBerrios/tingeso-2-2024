@@ -39,42 +39,48 @@ class ClientDocumentServiceTest {
     @Mock
     private DocumentationRepository documentationRepository;
 
+    private static final String CLIENT_RUT = "12345678-9";
+
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        // Create a mock DocumentationEntity and save it to simulate existing documentation
+        DocumentationEntity existingDocumentation = new DocumentationEntity();
+        existingDocumentation.setRut(CLIENT_RUT);
+        existingDocumentation.setIncomeProof(false);
+        // Set other fields as needed
+
+        when(documentationRepository.findById(CLIENT_RUT)).thenReturn(Optional.of(existingDocumentation));
     }
 
     @Test
     void whenSaveDocument_thenDocumentIsSaved() throws IOException {
         // Given
-        String clientRut = "12345678-9";
         String documentType = "incomeProof";
         MockMultipartFile file = new MockMultipartFile("file", "document.pdf", "application/pdf", "dummy content".getBytes());
 
-        // Mock the documentation and client document entities
-        DocumentationEntity documentation = new DocumentationEntity();
-        documentation.setRut(clientRut);
-        given(documentationRepository.findByRut(clientRut)).willReturn(documentation);
-
         ClientDocumentEntity document = new ClientDocumentEntity();
-        document.setClientRut(clientRut);
+        document.setClientRut(CLIENT_RUT);
         document.setDocumentType(documentType);
         document.setDocumentName(file.getOriginalFilename());
         document.setDocumentData(file.getBytes());
         document.setUploadDate(new Date());
 
-        given(clientDocumentRepository.save(any(ClientDocumentEntity.class))).willReturn(document);
+        when(clientDocumentRepository.save(any(ClientDocumentEntity.class))).thenReturn(document);
 
         // When
-        ClientDocumentEntity savedDocument = clientDocumentService.saveDocument(clientRut, documentType, file);
+        ClientDocumentEntity savedDocument = clientDocumentService.saveDocument(CLIENT_RUT, documentType, file);
 
         // Then
         assertThat(savedDocument).isNotNull();
-        assertThat(savedDocument.getClientRut()).isEqualTo(clientRut);
+        assertThat(savedDocument.getClientRut()).isEqualTo(CLIENT_RUT);
         assertThat(savedDocument.getDocumentType()).isEqualTo(documentType);
         assertThat(savedDocument.getDocumentName()).isEqualTo("document.pdf");
+
         verify(clientDocumentRepository, times(1)).save(any(ClientDocumentEntity.class));
-        verify(documentationRepository, times(1)).save(documentation);
+        verify(documentationRepository, times(1)).save(any(DocumentationEntity.class));
     }
 
     @Test

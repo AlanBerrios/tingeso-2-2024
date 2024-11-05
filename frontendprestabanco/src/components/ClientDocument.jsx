@@ -80,8 +80,9 @@ export default function ClientDocument() {
   
       if (response.status === 200) {
         setUploadSuccess("Documento subido exitosamente.");
-        fetchDocumentationStatus(clientRut);  // Refresh the documentation state after upload
-        fetchClientDocuments(clientRut);  // Refresh the client documents
+        // Fetch the latest documentation status to reflect the updated delivery status
+        fetchDocumentationStatus(clientRut);
+        fetchClientDocuments(clientRut);
       } else {
         setUploadError("Error al subir el documento.");
       }

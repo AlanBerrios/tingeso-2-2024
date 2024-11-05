@@ -1,4 +1,3 @@
-// ClientDocument.jsx
 import React, { useState, useEffect } from "react";
 import gestionService from "../services/gestion.service.js";
 
@@ -67,21 +66,26 @@ export default function ClientDocument() {
   const handleUpload = async (e, documentType) => {
     const file = e.target.files[0];
     if (!file) return;
-  
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("clientRut", clientRut);
     formData.append("documentType", documentType);
-  
+
     try {
       setUploadError("");
       setUploadSuccess("");
+
       const response = await gestionService.uploadClientDocument(formData);
-  
+
       if (response.status === 200) {
         setUploadSuccess("Documento subido exitosamente.");
-        // Fetch the latest documentation status to reflect the updated delivery status
-        fetchDocumentationStatus(clientRut);
+
+        // Update only the specific document type to "Entregado" without reloading all documents
+        setDocumentation((prevDocumentation) => ({
+          ...prevDocumentation,
+          [documentType]: true,
+        }));
         fetchClientDocuments(clientRut);
       } else {
         setUploadError("Error al subir el documento.");

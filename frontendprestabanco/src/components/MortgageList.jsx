@@ -40,13 +40,18 @@ export default function MortgageList() {
 
   const handleDelete = async (id) => {
     try {
-      await gestionService.deleteMortgageLoanById(id);
-      alert("Solicitud eliminada exitosamente.");
-      fetchMortgages(); // Refresh the table after deletion
+        await gestionService.deleteMortgageLoanById(id);
+        setMortgages((prevMortgages) => prevMortgages.filter((mortgage) => mortgage.id !== id));
+        alert("Solicitud eliminada exitosamente.");
     } catch (error) {
-      setError("Error al eliminar la solicitud de crédito.");
+        if (error.response && error.response.status === 404) {
+            setError("El préstamo hipotecario con ID " + id + " no se encontró.");
+        } else {
+            setError("Error al eliminar la solicitud de crédito.");
+        }
     }
-  };
+};
+
 
   return (
     <div className="container mt-4">

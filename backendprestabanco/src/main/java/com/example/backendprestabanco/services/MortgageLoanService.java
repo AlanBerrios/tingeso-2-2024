@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MortgageLoanService {
@@ -52,10 +53,12 @@ public class MortgageLoanService {
     }
 
     public void deleteMortgageLoanById(Long id) {
-        if (mortgageLoanRepository.findById(id).isPresent()) {
+        Optional<MortgageLoanEntity> loan = mortgageLoanRepository.findById(id);
+        if (loan.isPresent()) {
             mortgageLoanRepository.deleteByIdNativeQuery(id);
         } else {
-            throw new RuntimeException("Mortgage loan not found");
+            throw new RuntimeException("Mortgage loan with ID " + id + " not found");
         }
     }
+
 }

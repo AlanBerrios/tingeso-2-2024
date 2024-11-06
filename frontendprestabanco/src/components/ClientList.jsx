@@ -31,9 +31,7 @@ export default function ClientList() {
         console.error("Error al eliminar el cliente:", error.response ? error.response.data : error.message);
         alert("Error al eliminar el cliente: " + (error.response ? error.response.data : error.message));
     }
-  };
-
-
+};
   
 
   return (

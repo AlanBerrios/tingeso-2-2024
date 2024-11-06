@@ -21,12 +21,15 @@ export default function ClientList() {
 
   const handleDelete = async (rut) => {
     try {
-      await gestionService.deleteClientByRut(rut);
+      const response = await gestionService.deleteClientByRut(rut);
+      console.log(response); // Para verificar la respuesta
       setClients(clients.filter((client) => client.rut !== rut));
     } catch (error) {
+      console.error(error); // Ver error en consola
       alert("Error al eliminar el cliente.");
     }
   };
+  
 
   return (
     <div className="container">

@@ -41,7 +41,7 @@ public class ClientController {
 		return ResponseEntity.ok(updatedClient);
 	}
 
-	@DeleteMapping("/{rut}")
+	@DeleteMapping("/delete/{rut}")
 	public ResponseEntity<Void> deleteClient(@PathVariable String rut) {
 		try {
             clientService.deleteClient(rut);

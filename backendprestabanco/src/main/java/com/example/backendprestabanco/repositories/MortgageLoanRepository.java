@@ -23,7 +23,9 @@ public interface MortgageLoanRepository extends JpaRepository<MortgageLoanEntity
     MortgageLoanEntity findByRutNativeQuery(@Param("rut") String rut);
 
     // Query nativa para eliminar una solicitud de credito por el ID de la solicitud
-    @Query(value = "DELETE FROM mortgage_loans WHERE mortgage_loans.id = :id", nativeQuery = true)
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM mortgage_loans WHERE id = :id", nativeQuery = true)
     void deleteByIdNativeQuery(@Param("id") Long id);
 
     @Modifying

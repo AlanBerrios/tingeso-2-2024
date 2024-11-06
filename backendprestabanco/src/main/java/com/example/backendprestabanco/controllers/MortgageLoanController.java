@@ -3,6 +3,7 @@ package com.example.backendprestabanco.controllers;
 import com.example.backendprestabanco.entities.MortgageLoanEntity;
 import com.example.backendprestabanco.services.MortgageLoanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,12 +70,15 @@ public class MortgageLoanController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteMortgageLoanById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMortgageLoanById(@PathVariable Long id) {
         try {
             mortgageLoanService.deleteMortgageLoanById(id);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body("Mortgage loan not found with ID: " + id);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }

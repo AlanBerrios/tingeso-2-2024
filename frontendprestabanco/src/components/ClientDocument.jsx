@@ -1,4 +1,3 @@
-// ClientDocument.jsx
 import React, { useState, useEffect } from "react";
 import gestionService from "../services/gestion.service.js";
 
@@ -77,12 +76,17 @@ export default function ClientDocument() {
       setUploadError("");
       setUploadSuccess("");
 
+      // Buscar y eliminar el documento existente antes de subir uno nuevo
+      const existingDocument = clientDocuments.find((doc) => doc.documentType === documentType);
+      if (existingDocument) {
+        await gestionService.deleteClientDocument(existingDocument.id);
+      }
+
       const response = await gestionService.uploadClientDocument(formData);
 
       if (response.status === 200) {
         setUploadSuccess("Documento subido exitosamente.");
         
-        // Fetch updated client documents and documentation status
         fetchDocumentationStatus(clientRut);
         fetchClientDocuments(clientRut);
       } else {
@@ -100,10 +104,16 @@ export default function ClientDocument() {
         setClientDocuments((prevDocuments) =>
           prevDocuments.filter((doc) => doc.id !== documentId)
         );
-        setDocumentation((prevDocumentation) => ({
-          ...prevDocumentation,
-          [documentType]: false,
-        }));
+
+        const isDocumentTypeEmpty = clientDocuments.filter((doc) => doc.documentType === documentType).length === 1;
+        if (isDocumentTypeEmpty) {
+          // Actualizar el estado en `Documentation` en la base de datos a `false`
+          const updatedDocumentation = { ...documentation, [documentType]: false };
+          await gestionService.updateDocumentation(updatedDocumentation);
+          
+          // Refrescar el estado local de la documentación
+          setDocumentation(updatedDocumentation);
+        }
         setError("");
       } else {
         setError("Error al eliminar el documento.");
@@ -124,7 +134,7 @@ export default function ClientDocument() {
         <table className="table">
           <thead>
             <tr>
-              <th>Documento</th>
+              <th>Documentosss</th>
               <th>Estado</th>
               <th>Nombre de Archivo</th>
               <th>Acciones</th>

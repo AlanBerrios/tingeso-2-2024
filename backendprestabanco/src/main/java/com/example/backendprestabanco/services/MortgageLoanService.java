@@ -52,6 +52,10 @@ public class MortgageLoanService {
     }
 
     public void deleteMortgageLoanById(Long id) {
-        mortgageLoanRepository.deleteByIdNativeQuery(id);
+        if (mortgageLoanRepository.findById(id).isPresent()) {
+            mortgageLoanRepository.deleteByIdNativeQuery(id);
+        } else {
+            throw new RuntimeException("Mortgage loan not found");
+        }
     }
 }

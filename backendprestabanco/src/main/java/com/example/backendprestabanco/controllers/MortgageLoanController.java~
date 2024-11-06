@@ -69,12 +69,8 @@ public class MortgageLoanController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteMortgageLoanById(@PathVariable Long id) {
-        try {
-            mortgageLoanService.deleteMortgageLoanById(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body("Mortgage loan not found with ID: " + id);
-        }
+    public ResponseEntity<Boolean> deleteMortgageLoanById(@PathVariable Long id) throws Exception {
+        mortgageLoanService.deleteMortgageLoanById(id);
+        return ResponseEntity.noContent().build();
     }
 }

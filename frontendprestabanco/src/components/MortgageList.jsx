@@ -9,17 +9,17 @@ export default function MortgageList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchMortgages = async () => {
-      try {
-        const response = await gestionService.getMortgageLoans();
-        setMortgages(response.data);
-      } catch (error) {
-        setError("Error al obtener la lista de solicitudes de crédito.");
-      }
-    };
-
     fetchMortgages();
   }, []);
+
+  const fetchMortgages = async () => {
+    try {
+      const response = await gestionService.getMortgageLoans();
+      setMortgages(response.data);
+    } catch (error) {
+      setError("Error al obtener la lista de solicitudes de crédito.");
+    }
+  };
 
   const handleEvaluate = (id) => {
     navigate(`/creditEvaluation/${id}`);
@@ -41,8 +41,8 @@ export default function MortgageList() {
   const handleDelete = async (id) => {
     try {
       await gestionService.deleteMortgageLoanById(id);
-      setMortgages((prevMortgages) => prevMortgages.filter((mortgage) => mortgage.id !== id));
       alert("Solicitud eliminada exitosamente.");
+      fetchMortgages(); // Refresh the table after deletion
     } catch (error) {
       setError("Error al eliminar la solicitud de crédito.");
     }

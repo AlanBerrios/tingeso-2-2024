@@ -12,7 +12,7 @@ export default function EjecHeader() {
         left: 0, 
         width: '100%', 
         zIndex: 1000, 
-        backgroundColor: '#FFFF00'  // Amarillo para el ejecutivo
+        backgroundColor: '#eacb06'  // Amarillo para el ejecutivo
       }}
     >
       <div className="container-fluid">

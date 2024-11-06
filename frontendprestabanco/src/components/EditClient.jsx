@@ -11,6 +11,7 @@ export default function EditClient() {
     firstName: "",
     lastName: "",
     email: "",
+    password: "",
     phone: "",
     income: 0,
     creditHistory: "",
@@ -67,7 +68,7 @@ export default function EditClient() {
 
   return (
     <div className="container">
-      <h2>Editar Cliente</h2>
+      <h2>Editar Cliente - Rut: {client.rut}</h2>
       <form onSubmit={handleSubmit}>
         <div className="row">
           {Object.keys(client).map((key) => {
@@ -78,6 +79,7 @@ export default function EditClient() {
               firstName: "Nombre",
               lastName: "Apellido",
               email: "Correo",
+              password: "Contraseña",
               phone: "Teléfono",
               income: "Ingresos",
               creditHistory: "Historial Crediticio",
@@ -101,9 +103,9 @@ export default function EditClient() {
                     required
                   >
                     <option value="">Seleccione</option>
-                    <option value="Good">Good</option>
-                    <option value="Moderate">Moderate</option>
-                    <option value="Weak">Weak</option>
+                    <option value="Good">Bueno</option>
+                    <option value="Moderate">Moderado</option>
+                    <option value="Weak">Débil</option>
                   </select>
                 ) : key === "historyStatus" ? (
                   <select
@@ -114,9 +116,21 @@ export default function EditClient() {
                     required
                   >
                     <option value="">Seleccione</option>
-                    <option value="Good">Good</option>
-                    <option value="Moderate">Moderate</option>
-                    <option value="Bad">Bad</option>
+                    <option value="Good">Bueno</option>
+                    <option value="Moderate">Moderado</option>
+                    <option value="Bad">Malo</option>
+                  </select>
+                ) : key === "employmentType" ? (
+                  <select
+                    className="form-select"
+                    name={key}
+                    value={client[key]}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Seleccione</option>
+                    <option value="Dependent">Dependiente</option>
+                    <option value="Independent">Independiente</option>
                   </select>
                 ) : (
                   <input

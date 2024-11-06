@@ -105,7 +105,7 @@ export default function CreditRequest() {
       setError("");
       setTimeout(() => {
         setIsLoading(false);
-        navigate("/mortgageList");
+        navigate("/mortgageListForClient");
       }, 3000);
     } catch (error) {
       console.error(error);

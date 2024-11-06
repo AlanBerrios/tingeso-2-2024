@@ -52,6 +52,6 @@ public class MortgageLoanService {
     }
 
     public void deleteMortgageLoanById(Long id) {
-        mortgageLoanRepository.deleteById(id);
+        mortgageLoanRepository.deleteByIdNativeQuery(id);
     }
 }

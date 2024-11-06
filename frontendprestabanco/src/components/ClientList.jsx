@@ -74,7 +74,7 @@ export default function ClientList() {
                 <Link to={`/editClient/${client.rut}`} className="btn btn-primary me-2">
                   Editar
                 </Link>
-                <button onClick={() => handleDelete(client.rut)} className="btn btn-danger">
+                <button onClick={() => handleDelete(client.rut) && navigate("/clientList")} className="btn btn-danger" >
                   Eliminar
                 </button>
               </td>

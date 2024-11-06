@@ -96,19 +96,19 @@ class ClientServiceTest {
     }
 
     @Test
-    public void whenDeleteClient_thenReturnTrue() throws Exception {
+    public void whenDeleteClient_thenDeleteIsCalled() throws Exception {
         // given
         String rut = "12345678-9";
         given(clientRepository.existsByRut(rut)).willReturn(true);
         doNothing().when(clientRepository).deleteByRut(rut);
 
         // when
-        boolean isDeleted = clientService.deleteClient(rut);
+        clientService.deleteClient(rut);
 
         // then
-        assertThat(isDeleted).isTrue();
         verify(clientRepository, times(1)).deleteByRut(rut);
     }
+
 
     @Test
     public void whenDeleteClientThrowsException_thenThrowsException() {

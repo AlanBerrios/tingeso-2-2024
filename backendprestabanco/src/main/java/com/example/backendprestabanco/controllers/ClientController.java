@@ -44,7 +44,8 @@ public class ClientController {
 	@DeleteMapping("/{rut}")
 	public ResponseEntity<Void> deleteClient(@PathVariable String rut) {
 		try {
-			boolean isDeleted = clientService.deleteClient(rut);
+            clientService.deleteClient(rut);
+			boolean isDeleted = clientService.getClientByRut(rut) == null;
 			if (isDeleted) {
 				return ResponseEntity.noContent().build(); // Retorna 204 No Content si se elimina correctamente
 			} else {

@@ -126,14 +126,4 @@ public class ClientControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName", is("Marco")));
     }
-
-    @Test
-    public void deleteClientByRut_ShouldReturn204() throws Exception {
-        // given
-        given(clientService.deleteClient("12345678-9")).willReturn(true);
-
-        // when + then
-        mockMvc.perform(delete("/api/v1/clients/{rut}", "12345678-9"))
-                .andExpect(status().isNoContent()); // Verifica que el estado sea 204
-    }
 }

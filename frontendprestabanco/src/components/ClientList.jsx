@@ -19,9 +19,9 @@ export default function ClientList() {
     fetchClients();
   }, []);
 
-  const handleDelete = async () => {
+  const handleDelete = async (rut) => {
     try {
-      const response = await gestionService.deleteClientByRut(client.rut);
+      const response = await gestionService.deleteClientByRut(rut);
       if (response.status === 200) {
         alert("Cliente eliminado exitosamente.");
         navigate("/clientList");

@@ -5,6 +5,7 @@ import gestionService from "../services/gestion.service.js";
 export default function EditClient() {
   const { rut } = useParams();
   const navigate = useNavigate();
+
   const [client, setClient] = useState({
     rut: "",
     firstName: "",
@@ -39,10 +40,26 @@ export default function EditClient() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validar campos obligatorios
+    for (const [key, value] of Object.entries(client)) {
+      if (value === "" && key !== "income" && key !== "pendingDebts") {
+        alert("Este cuadro no puede estar vacío");
+        return;
+      }
+    }
+
+    // Establecer valores en 0 si están vacíos para `income` y `pendingDebts`
+    setClient((prevClient) => ({
+      ...prevClient,
+      income: prevClient.income || 0,
+      pendingDebts: prevClient.pendingDebts || 0,
+    }));
+
     try {
       await gestionService.updateClient(client);
       alert("Cliente actualizado exitosamente");
-      navigate("/client-list"); // Redirige a la lista de clientes
+      navigate("/clientList");
     } catch (error) {
       alert("Error al actualizar el cliente.");
     }
@@ -52,23 +69,86 @@ export default function EditClient() {
     <div className="container">
       <h2>Editar Cliente</h2>
       <form onSubmit={handleSubmit}>
-        {Object.keys(client).map((key) =>
-          key !== "rut" ? (
-            <div className="mb-3" key={key}>
-              <label className="form-label">{key}</label>
-              <input
-                type="text"
-                className="form-control"
-                name={key}
-                value={client[key]}
-                onChange={handleChange}
-              />
-            </div>
-          ) : null
-        )}
-        <button type="submit" className="btn btn-success">
-          Guardar Cambios
-        </button>
+        <div className="row">
+          {Object.keys(client).map((key) => {
+            if (key === "rut") return null; // No permitir editar el RUT
+
+            // Mapeo de etiquetas en español
+            const labels = {
+              firstName: "Nombre",
+              lastName: "Apellido",
+              email: "Correo",
+              phone: "Teléfono",
+              income: "Ingresos",
+              creditHistory: "Historial Crediticio",
+              age: "Edad",
+              employmentType: "Tipo de Empleo",
+              employmentSeniority: "Antigüedad en Empleo",
+              historyStatus: "Estado del Historial",
+              pendingDebts: "Deudas Pendientes",
+            };
+
+            return (
+              <div className="col-md-6 mb-3" key={key}>
+                <label className="form-label">{labels[key]}</label>
+
+                {key === "creditHistory" ? (
+                  <select
+                    className="form-select"
+                    name={key}
+                    value={client[key]}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Seleccione</option>
+                    <option value="Good">Good</option>
+                    <option value="Moderate">Moderate</option>
+                    <option value="Weak">Weak</option>
+                  </select>
+                ) : key === "historyStatus" ? (
+                  <select
+                    className="form-select"
+                    name={key}
+                    value={client[key]}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Seleccione</option>
+                    <option value="Good">Good</option>
+                    <option value="Moderate">Moderate</option>
+                    <option value="Bad">Bad</option>
+                  </select>
+                ) : (
+                  <input
+                    type={key === "age" || key === "income" || key === "pendingDebts" ? "number" : "text"}
+                    className="form-control"
+                    name={key}
+                    value={client[key]}
+                    onChange={handleChange}
+                    onBlur={() => {
+                      if ((key === "income" || key === "pendingDebts") && client[key] === "") {
+                        setClient((prevClient) => ({ ...prevClient, [key]: 0 }));
+                      }
+                    }}
+                    required
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <div className="d-flex">
+          <button type="submit" className="btn btn-success me-2">
+            Guardar Cambios
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => navigate("/clientList")}
+          >
+            Cancelar Edición
+          </button>
+        </div>
       </form>
     </div>
   );

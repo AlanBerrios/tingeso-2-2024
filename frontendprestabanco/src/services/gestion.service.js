@@ -88,6 +88,11 @@ function getClients() {
   return axios.get(CLIENTS_API_URL);
 }
 
+// Función para actualizar el cliente
+function updateClient(client) {
+  return axios.put(`${CLIENTS_API_URL}`, client);
+}
+
 function getClientByRut(rut) {
   return axios.get(`${CLIENTS_API_URL}${rut}`);
 }
@@ -379,5 +384,6 @@ export default {
   calculateInsurance,
   calculateAdminFee,
   calculateMonthlyCost,
-  calculateTotalLoanCost
+  calculateTotalLoanCost,
+  updateClient
 };

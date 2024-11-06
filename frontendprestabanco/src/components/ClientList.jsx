@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import gestionService from "../services/gestion.service.js";
-import { Link } from "react-router-dom";
 
 export default function ClientList() {
   const [clients, setClients] = useState([]);
+  const navigate = useNavigate();
 
-  // Función para obtener la lista de clientes
   async function fetchClients() {
     try {
       const response = await gestionService.getClients();
@@ -15,15 +15,22 @@ export default function ClientList() {
     }
   }
 
-  // Ejecutar fetchClients cuando se monta el componente
   useEffect(() => {
     fetchClients();
   }, []);
 
+  const handleDelete = async (rut) => {
+    try {
+      await gestionService.deleteClientByRut(rut);
+      setClients(clients.filter((client) => client.rut !== rut));
+    } catch (error) {
+      alert("Error al eliminar el cliente.");
+    }
+  };
+
   return (
     <div className="container">
       <h1>Lista de Clientes</h1>
-
       <table className="table">
         <thead>
           <tr>
@@ -39,6 +46,7 @@ export default function ClientList() {
             <th scope="col">Antigüedad Empleo</th>
             <th scope="col">Estado Historial</th>
             <th scope="col">Deudas Pendientes</th>
+            <th scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -56,6 +64,14 @@ export default function ClientList() {
               <td>{client.employmentSeniority}</td>
               <td>{client.historyStatus}</td>
               <td>{client.pendingDebts}</td>
+              <td>
+                <Link to={`/edit-client/${client.rut}`} className="btn btn-primary me-2">
+                  Editar
+                </Link>
+                <button onClick={() => handleDelete(client.rut)} className="btn btn-danger">
+                  Eliminar
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

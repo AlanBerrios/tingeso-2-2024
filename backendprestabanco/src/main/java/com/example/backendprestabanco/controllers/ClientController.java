@@ -3,6 +3,7 @@ package com.example.backendprestabanco.controllers;
 import com.example.backendprestabanco.entities.ClientEntity;
 import com.example.backendprestabanco.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,8 +42,17 @@ public class ClientController {
 	}
 
 	@DeleteMapping("/{rut}")
-	public ResponseEntity<Boolean> deleteClientByRut(@PathVariable String rut) throws Exception {
-		var isDeleted = clientService.deleteClient(rut);
-		return ResponseEntity.noContent().build();
-	}
+public ResponseEntity<Boolean> deleteClientByRut(@PathVariable String rut) {
+    try {
+        boolean isDeleted = clientService.deleteClient(rut);
+        if (isDeleted) {
+            return ResponseEntity.noContent().build(); // Retorna 204 si se elimina exitosamente
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false); // Retorna 404 si no se encuentra el cliente
+        }
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false); // Retorna 500 si hay un error
+    }
+}
+
 }

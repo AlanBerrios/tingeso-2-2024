@@ -12,6 +12,7 @@ import java.util.List;
 public interface ClientRepository extends JpaRepository<ClientEntity, String> {
     public ClientEntity findByRut(String rut);
     public void deleteByRut(String rut);
+    boolean existsByRut(String rut);
 
     // Query nativo para encontrar un cliente por su RUT
     @Query(value = "SELECT * FROM clients WHERE clients.rut = :rut", nativeQuery = true)

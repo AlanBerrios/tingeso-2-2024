@@ -24,6 +24,7 @@ import MortgageDetailsForClient from './components/MortgageDetailsForClient';
 import MortgageListForClient from './components/MortgageListForClient';
 import SavingsCapacity from './components/SavingCapacity';
 import LoanCostCalculate from './components/LoanCostCalculate';
+import EditClient from './components/EditClient';
 
 function App() {
   const location = useLocation(); // Detecta la ruta actual
@@ -44,7 +45,8 @@ function App() {
       location.pathname.startsWith('/creditEvaluation/') ||
       location.pathname.startsWith('/documentationReview/') || 
       location.pathname === '/savingCapacity' ||
-      location.pathname === '/loanCostCalculate'
+      location.pathname === '/loanCostCalculate' ||
+      location.pathname === '/editClient'
     ) {
       return <EjecHeader />;
 
@@ -83,6 +85,7 @@ function App() {
         <Route path="/mortgageListForClient" element={<MortgageListForClient />} />
         <Route path="/savingCapacity" element={<SavingsCapacity />} />
         <Route path="/loanCostCalculate" element={<LoanCostCalculate />} />
+        <Route path="/editClient" element={<EditClient />} />
       </Routes>
     </>
   );

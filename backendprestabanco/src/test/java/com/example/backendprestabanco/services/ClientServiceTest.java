@@ -114,14 +114,15 @@ class ClientServiceTest {
     public void whenDeleteClientThrowsException_thenThrowsException() {
         // given
         String rut = "12345678-9";
-        doThrow(new IllegalArgumentException("Error al eliminar el cliente: Cliente con RUT no encontrado: " + rut))
+        doThrow(new IllegalArgumentException("Cliente con RUT no encontrado: " + rut))
                 .when(clientRepository).deleteByRut(rut);
 
         // then
         assertThatThrownBy(() -> clientService.deleteClient(rut))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Error al eliminar el cliente: Cliente con RUT no encontrado");
+                .hasMessageContaining("Cliente con RUT no encontrado");
     }
+
 
 
     @Test

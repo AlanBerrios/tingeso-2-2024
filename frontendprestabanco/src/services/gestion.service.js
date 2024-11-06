@@ -254,7 +254,7 @@ function deleteMortgageLoan(rut) {
 }
 
 function deleteMortgageLoanById(id) {
-  return axios.delete(`${MORTGAGE_LOANS_API_URL}${id}`);
+  return axios.delete(`${MORTGAGE_LOANS_API_URL}delete/${id}`);
 }
 
 // Funciones para seguimiento de solicitudes

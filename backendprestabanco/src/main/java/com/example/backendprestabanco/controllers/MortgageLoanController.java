@@ -68,7 +68,7 @@ public class MortgageLoanController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Boolean> deleteMortgageLoanById(@PathVariable Long id) throws Exception {
         mortgageLoanService.deleteMortgageLoanById(id);
         return ResponseEntity.noContent().build();

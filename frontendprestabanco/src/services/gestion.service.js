@@ -85,6 +85,7 @@ function createClient(client) {
 }
 
 function deleteClientByRut(rut) {
+  console.log(`Eliminando cliente con RUT: ${rut}`);
   return axios.delete(`${CLIENTS_API_URL}${rut}`);
 }
 

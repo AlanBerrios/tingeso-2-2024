@@ -29,7 +29,7 @@ public class ClientService {
     }
 
     public void deleteClient(String rut) {
-        clientRepository.deleteByRut(rut);
+        clientRepository.deleteByRutNativeQuery(rut);
         return;
     }
 

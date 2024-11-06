@@ -84,6 +84,11 @@ function createClient(client) {
   return axios.post(CLIENTS_API_URL, client);
 }
 
+function deleteClientByRut(rut) {
+  return axios.delete(`${CLIENTS_API_URL}${rut}`);
+}
+
+
 function getClients() {
   return axios.get(CLIENTS_API_URL);
 }
@@ -385,5 +390,6 @@ export default {
   calculateAdminFee,
   calculateMonthlyCost,
   calculateTotalLoanCost,
-  updateClient
+  updateClient,
+  deleteClientByRut
 };

@@ -46,7 +46,7 @@ function App() {
       location.pathname.startsWith('/documentationReview/') || 
       location.pathname === '/savingCapacity' ||
       location.pathname === '/loanCostCalculate' ||
-      location.pathname === '/editClient'
+      location.pathname.startsWith('/editClient/')
     ) {
       return <EjecHeader />;
 
@@ -85,7 +85,7 @@ function App() {
         <Route path="/mortgageListForClient" element={<MortgageListForClient />} />
         <Route path="/savingCapacity" element={<SavingsCapacity />} />
         <Route path="/loanCostCalculate" element={<LoanCostCalculate />} />
-        <Route path="/editClient" element={<EditClient />} />
+        <Route path="/editClient/:rut" element={<EditClient />} />
       </Routes>
     </>
   );

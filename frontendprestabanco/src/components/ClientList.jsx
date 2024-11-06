@@ -19,19 +19,19 @@ export default function ClientList() {
     fetchClients();
   }, []);
 
-  const handleDelete = async (rut) => {
+  const handleDelete = async () => {
     try {
-        const response = await gestionService.deleteClientByRut(rut);
-        if (response.status === 204) {
-            setClients(clients.filter((client) => client.rut !== rut));
-        } else {
-            alert("Cliente no encontrado o error al eliminar.");
-        }
+      const response = await gestionService.deleteClientByRut(rut);
+      if (response.status === 200) {
+        alert("Cliente eliminado exitosamente.");
+        navigate("/clientList");
+      } else {
+        alert("Error al eliminar el cliente.");
+      }
     } catch (error) {
-        console.error("Error al eliminar el cliente:", error.response ? error.response.data : error.message);
-        alert("Error al eliminar el cliente: " + (error.response ? error.response.data : error.message));
+      alert("Error al eliminar el cliente: " + (error.response ? error.response.data : error.message));
     }
-};
+  };
   
 
   return (

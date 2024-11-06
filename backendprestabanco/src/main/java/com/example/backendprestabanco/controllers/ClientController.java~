@@ -42,14 +42,17 @@ public class ClientController {
 	}
 
 	@DeleteMapping("/{rut}")
-	public ResponseEntity<Void> deleteClientByRut(@PathVariable String rut) {
-		try {
-			clientService.deleteClient(rut);
-			return ResponseEntity.noContent().build();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
+public ResponseEntity<Boolean> deleteClientByRut(@PathVariable String rut) {
+    try {
+        boolean isDeleted = clientService.deleteClient(rut);
+        if (isDeleted) {
+            return ResponseEntity.noContent().build(); // Retorna 204 si se elimina exitosamente
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false); // Retorna 404 si no se encuentra el cliente
+        }
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false); // Retorna 500 si hay un error
+    }
+}
 
 }

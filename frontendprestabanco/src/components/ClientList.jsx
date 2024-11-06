@@ -28,10 +28,11 @@ export default function ClientList() {
             alert("Cliente no encontrado o error al eliminar.");
         }
     } catch (error) {
-        console.error("Error al eliminar el cliente:", error);
-        alert("Error al eliminar el cliente.");
+        console.error("Error al eliminar el cliente:", error.response ? error.response.data : error.message);
+        alert("Error al eliminar el cliente: " + (error.response ? error.response.data : error.message));
     }
-};
+  };
+
 
   
 

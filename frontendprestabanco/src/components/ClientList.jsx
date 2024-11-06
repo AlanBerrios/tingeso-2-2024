@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import gestionService from "../services/gestion.service.js";
 
 export default function ClientList() {
   const [clients, setClients] = useState([]);
-  const navigate = useNavigate();
 
   async function fetchClients() {
     try {
@@ -24,7 +23,8 @@ export default function ClientList() {
       const response = await gestionService.deleteClientByRut(rut);
       if (response.status === 200) {
         alert("Cliente eliminado exitosamente.");
-        navigate("/clientList");
+        // Actualizar la lista de clientes eliminando el cliente borrado
+        setClients(clients.filter(client => client.rut !== rut));
       } else {
         alert("Error al eliminar el cliente.");
       }
@@ -32,7 +32,6 @@ export default function ClientList() {
       alert("Error al eliminar el cliente: " + (error.response ? error.response.data : error.message));
     }
   };
-  
 
   return (
     <div className="container">
@@ -74,7 +73,7 @@ export default function ClientList() {
                 <Link to={`/editClient/${client.rut}`} className="btn btn-primary me-2">
                   Editar
                 </Link>
-                <button onClick={() => handleDelete(client.rut) && navigate("/clientList")} className="btn btn-danger" >
+                <button onClick={() => handleDelete(client.rut)} className="btn btn-danger">
                   Eliminar
                 </button>
               </td>

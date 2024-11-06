@@ -65,7 +65,7 @@ export default function ClientList() {
               <td>{client.historyStatus}</td>
               <td>{client.pendingDebts}</td>
               <td>
-                <Link to={`/edit-client/${client.rut}`} className="btn btn-primary me-2">
+                <Link to={`/editClient/${client.rut}`} className="btn btn-primary me-2">
                   Editar
                 </Link>
                 <button onClick={() => handleDelete(client.rut)} className="btn btn-danger">

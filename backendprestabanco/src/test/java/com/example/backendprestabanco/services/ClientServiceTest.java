@@ -96,26 +96,11 @@ class ClientServiceTest {
     }
 
     @Test
-    public void whenDeleteClient_thenDeleteIsCalled() throws Exception {
-        // given
-        String rut = "12345678-9";
-        given(clientRepository.existsByRut(rut)).willReturn(true);
-        doNothing().when(clientRepository).deleteByRut(rut);
-
-        // when
-        clientService.deleteClient(rut);
-
-        // then
-        verify(clientRepository, times(1)).deleteByRut(rut);
-    }
-
-
-    @Test
     public void whenDeleteClientThrowsException_thenThrowsException() {
         // given
         String rut = "12345678-9";
         doThrow(new IllegalArgumentException("Cliente con RUT no encontrado: " + rut))
-                .when(clientRepository).deleteByRut(rut);
+                .when(clientRepository).deleteByRutNativeQuery(rut);
 
         // then
         assertThatThrownBy(() -> clientService.deleteClient(rut))

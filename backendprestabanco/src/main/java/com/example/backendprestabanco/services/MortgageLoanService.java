@@ -17,7 +17,6 @@ public class MortgageLoanService {
         return (ArrayList<MortgageLoanEntity>) mortgageLoanRepository.findAll();
     }
 
-
     public MortgageLoanEntity saveMortgageLoan(MortgageLoanEntity loan) {
         return mortgageLoanRepository.save(loan);
     }
@@ -50,5 +49,9 @@ public class MortgageLoanService {
 
     public void updateMortgageLoanStatus(Long id, String status) {
         mortgageLoanRepository.updateMortgageLoanStatus(id, status);
+    }
+
+    public void deleteMortgageLoanById(Long id) {
+        mortgageLoanRepository.deleteById(id);
     }
 }

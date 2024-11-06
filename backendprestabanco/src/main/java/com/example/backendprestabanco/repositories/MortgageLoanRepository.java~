@@ -16,7 +16,6 @@ public interface MortgageLoanRepository extends JpaRepository<MortgageLoanEntity
     public MortgageLoanEntity findByRut(String rut);
     public List<MortgageLoanEntity> findAllByRut(String rut);
     public void deleteByRut(String rut);
-    public void deleteById(Long id);
     Optional<MortgageLoanEntity> findById(Long id);
 
     @Query(value = "SELECT * FROM mortgage_loans WHERE mortgage_loans.rut = :rut", nativeQuery = true)

@@ -38,6 +38,16 @@ export default function MortgageList() {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await gestionService.deleteMortgageLoanById(id);
+      setMortgages((prevMortgages) => prevMortgages.filter((mortgage) => mortgage.id !== id));
+      alert("Solicitud eliminada exitosamente.");
+    } catch (error) {
+      setError("Error al eliminar la solicitud de crédito.");
+    }
+  };
+
   return (
     <div className="container mt-4">
       <h1>Lista de Solicitudes de Crédito</h1>
@@ -75,6 +85,12 @@ export default function MortgageList() {
                   disabled={mortgage.status !== "En Aprobación Final"}
                 >
                   Aprobar
+                </button>
+                <button
+                  className="btn btn-danger ms-2"
+                  onClick={() => handleDelete(mortgage.id)}
+                >
+                  Eliminar
                 </button>
               </td>
             </tr>

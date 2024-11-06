@@ -67,4 +67,10 @@ public class MortgageLoanController {
         var isDeleted = mortgageLoanService.deleteMortgageLoan(rut);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> deleteMortgageLoanById(@PathVariable Long id) throws Exception {
+        mortgageLoanService.deleteMortgageLoanById(id);
+        return ResponseEntity.noContent().build();
+    }
 }

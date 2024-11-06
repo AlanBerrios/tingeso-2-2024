@@ -253,6 +253,10 @@ function deleteMortgageLoan(rut) {
   return axios.delete(`${MORTGAGE_LOANS_API_URL}${rut}`);
 }
 
+function deleteMortgageLoanById(id) {
+  return axios.delete(`${MORTGAGE_LOANS_API_URL}${id}`);
+}
+
 // Funciones para seguimiento de solicitudes
 function createRequestTracking(tracking) {
   return axios.post(REQUEST_TRACKING_API_URL, tracking);
@@ -392,5 +396,6 @@ export default {
   calculateMonthlyCost,
   calculateTotalLoanCost,
   updateClient,
-  deleteClientByRut
+  deleteClientByRut,
+  deleteMortgageLoanById
 };

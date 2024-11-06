@@ -99,7 +99,6 @@ class ClientServiceTest {
     public void whenDeleteClient_thenReturnTrue() throws Exception {
         // given
         String rut = "12345678-9";
-        given(clientRepository.existsByRut(rut)).willReturn(true);
         doNothing().when(clientRepository).deleteByRut(rut);
 
         // when

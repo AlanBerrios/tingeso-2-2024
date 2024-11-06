@@ -60,7 +60,7 @@ public class ClientDocumentService {
         return document;
     }
 
-    private void setDocumentStatus(DocumentationEntity documentation, String documentType, boolean status) {
+    public void setDocumentStatus(DocumentationEntity documentation, String documentType, boolean status) {
         switch (documentType) {
             case "incomeProof":
                 documentation.setIncomeProof(status);
@@ -93,7 +93,7 @@ public class ClientDocumentService {
         LOGGER.info("Set documentType " + documentType + " to " + status + " in DocumentationEntity.");
     }
 
-    private boolean checkIfAllDocumentsCompleted(DocumentationEntity documentation) {
+    public boolean checkIfAllDocumentsCompleted(DocumentationEntity documentation) {
         return Boolean.TRUE.equals(documentation.getIncomeProof()) &&
                 Boolean.TRUE.equals(documentation.getAppraisalCertificate()) &&
                 Boolean.TRUE.equals(documentation.getCreditHistory()) &&
@@ -113,6 +113,26 @@ public class ClientDocumentService {
     }
 
     public void deleteDocument(Long id) {
-        clientDocumentRepository.deleteById(id);
+        // Recuperar el documento a eliminar
+        Optional<ClientDocumentEntity> documentOpt = clientDocumentRepository.findById(id);
+        if (documentOpt.isPresent()) {
+            ClientDocumentEntity document = documentOpt.get();
+
+            // Eliminar el documento
+            clientDocumentRepository.deleteById(id);
+
+            // Actualizar el estado en DocumentationEntity
+            Optional<DocumentationEntity> documentationOpt = documentationRepository.findById(document.getClientRut());
+            if (documentationOpt.isPresent()) {
+                DocumentationEntity documentation = documentationOpt.get();
+
+                // Actualizar el estado del tipo de documento eliminado a `false`
+                setDocumentStatus(documentation, document.getDocumentType(), false);
+
+                // Guardar la actualización de DocumentationEntity
+                documentationRepository.save(documentation);
+            }
+        }
     }
+
 }

@@ -28,13 +28,15 @@ public class ClientService {
         return clientRepository.save(client);
     }
 
-    public boolean deleteClient(String rut) {
-        if (clientRepository.existsByRut(rut)) { // Verifica si el cliente existe antes de intentar eliminarlo
+    public boolean deleteClient(String rut) throws Exception {
+        if (clientRepository.existsByRut(rut)) { // Verificar si el cliente existe antes de eliminar
             clientRepository.deleteByRut(rut);
             return true;
         } else {
-            throw new IllegalArgumentException("Cliente con RUT no encontrado: " + rut); // Lanza excepción si no existe
+            throw new IllegalArgumentException("Error al eliminar el cliente: Cliente con RUT no encontrado: " + rut);
         }
     }
-    
+
+
+
 }

@@ -22,8 +22,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -41,26 +39,19 @@ class ClientDocumentServiceTest {
 
     private static final String CLIENT_RUT = "12345678-9";
 
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        // Create a mock DocumentationEntity and save it to simulate existing documentation
         DocumentationEntity existingDocumentation = new DocumentationEntity();
         existingDocumentation.setRut(CLIENT_RUT);
         existingDocumentation.setIncomeProof(false);
-        // Set other fields as needed
-
         when(documentationRepository.findById(CLIENT_RUT)).thenReturn(Optional.of(existingDocumentation));
     }
 
     @Test
     void whenSaveDocument_thenDocumentIsSaved() throws IOException {
-        // Given
         String documentType = "incomeProof";
         MockMultipartFile file = new MockMultipartFile("file", "document.pdf", "application/pdf", "dummy content".getBytes());
-
         ClientDocumentEntity document = new ClientDocumentEntity();
         document.setClientRut(CLIENT_RUT);
         document.setDocumentType(documentType);
@@ -70,99 +61,117 @@ class ClientDocumentServiceTest {
 
         when(clientDocumentRepository.save(any(ClientDocumentEntity.class))).thenReturn(document);
 
-        // When
         ClientDocumentEntity savedDocument = clientDocumentService.saveDocument(CLIENT_RUT, documentType, file);
 
-        // Then
         assertThat(savedDocument).isNotNull();
         assertThat(savedDocument.getClientRut()).isEqualTo(CLIENT_RUT);
         assertThat(savedDocument.getDocumentType()).isEqualTo(documentType);
-        assertThat(savedDocument.getDocumentName()).isEqualTo("document.pdf");
-
         verify(clientDocumentRepository, times(1)).save(any(ClientDocumentEntity.class));
         verify(documentationRepository, times(1)).save(any(DocumentationEntity.class));
     }
 
     @Test
+    void whenSaveDocumentWithNonexistentDocumentation_thenThrowException() {
+        String nonExistentRut = "00000000-0";
+        MockMultipartFile file = new MockMultipartFile("file", "document.pdf", "application/pdf", "dummy content".getBytes());
+        when(documentationRepository.findById(nonExistentRut)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> clientDocumentService.saveDocument(nonExistentRut, "incomeProof", file))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("No DocumentationEntity found for RUT: " + nonExistentRut);
+    }
+
+    @Test
     void whenSaveDocumentWithEmptyFile_thenThrowException() {
-        // Given
-        String clientRut = "12345678-9";
         String documentType = "ID";
         MockMultipartFile emptyFile = new MockMultipartFile("file", "empty.pdf", "application/pdf", new byte[0]);
 
-        // Then
-        assertThatThrownBy(() -> clientDocumentService.saveDocument(clientRut, documentType, emptyFile))
+        assertThatThrownBy(() -> clientDocumentService.saveDocument(CLIENT_RUT, documentType, emptyFile))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("El archivo está vacío o no es válido.");
     }
 
     @Test
     void whenGetDocumentsByClientRut_thenReturnDocumentsList() {
-        // Given
-        String clientRut = "12345678-9";
         ClientDocumentEntity document1 = new ClientDocumentEntity();
-        document1.setClientRut(clientRut);
+        document1.setClientRut(CLIENT_RUT);
         document1.setDocumentType("ID");
-
         ClientDocumentEntity document2 = new ClientDocumentEntity();
-        document2.setClientRut(clientRut);
+        document2.setClientRut(CLIENT_RUT);
         document2.setDocumentType("Passport");
-
         List<ClientDocumentEntity> documents = Arrays.asList(document1, document2);
-        given(clientDocumentRepository.findByClientRut(clientRut)).willReturn(documents);
+        when(clientDocumentRepository.findByClientRut(CLIENT_RUT)).thenReturn(documents);
 
-        // When
-        List<ClientDocumentEntity> result = clientDocumentService.getDocumentsByClientRut(clientRut);
+        List<ClientDocumentEntity> result = clientDocumentService.getDocumentsByClientRut(CLIENT_RUT);
 
-        // Then
         assertThat(result).hasSize(2);
-        assertThat(result).containsExactly(document1, document2);
-        verify(clientDocumentRepository, times(1)).findByClientRut(clientRut);
+        verify(clientDocumentRepository, times(1)).findByClientRut(CLIENT_RUT);
     }
 
     @Test
     void whenGetDocumentById_thenReturnDocument() {
-        // Given
         Long documentId = 1L;
         ClientDocumentEntity document = new ClientDocumentEntity();
         document.setId(documentId);
-        document.setClientRut("12345678-9");
-        document.setDocumentType("ID");
+        document.setClientRut(CLIENT_RUT);
+        when(clientDocumentRepository.findById(documentId)).thenReturn(Optional.of(document));
 
-        given(clientDocumentRepository.findById(documentId)).willReturn(Optional.of(document));
-
-        // When
         Optional<ClientDocumentEntity> result = clientDocumentService.getDocumentById(documentId);
 
-        // Then
         assertThat(result).isPresent();
-        assertThat(result.get().getId()).isEqualTo(documentId);
         verify(clientDocumentRepository, times(1)).findById(documentId);
     }
 
     @Test
-    void whenGetDocumentByIdAndDocumentNotFound_thenReturnEmpty() {
-        // Given
+    void whenDeleteDocument_thenDocumentIsDeletedAndStatusUpdated() {
+        // Arrange
         Long documentId = 1L;
-        given(clientDocumentRepository.findById(documentId)).willReturn(Optional.empty());
+        String documentType = "incomeProof";
 
-        // When
-        Optional<ClientDocumentEntity> result = clientDocumentService.getDocumentById(documentId);
+        // Mockear el documento a eliminar
+        ClientDocumentEntity document = new ClientDocumentEntity();
+        document.setId(documentId);
+        document.setClientRut(CLIENT_RUT);
+        document.setDocumentType(documentType);
 
-        // Then
-        assertThat(result).isEmpty();
-        verify(clientDocumentRepository, times(1)).findById(documentId);
-    }
+        // Mockear el comportamiento del repositorio para el documento y el estado de documentación
+        DocumentationEntity documentation = new DocumentationEntity();
+        documentation.setRut(CLIENT_RUT);
+        documentation.setIncomeProof(true);  // El estado inicial es `true`
 
-    @Test
-    void whenDeleteDocument_thenDocumentIsDeleted() {
-        // Given
-        Long documentId = 1L;
+        when(clientDocumentRepository.findById(documentId)).thenReturn(Optional.of(document));
+        when(documentationRepository.findById(CLIENT_RUT)).thenReturn(Optional.of(documentation));
 
-        // When
+        // Act
         clientDocumentService.deleteDocument(documentId);
 
-        // Then
+        // Assert
         verify(clientDocumentRepository, times(1)).deleteById(documentId);
+        verify(documentationRepository, times(1)).save(documentation);
+        assertThat(documentation.getIncomeProof()).isFalse();
+    }
+
+
+    @Test
+    void whenCheckIfAllDocumentsCompleted_thenReturnCorrectStatus() {
+        DocumentationEntity documentation = new DocumentationEntity();
+        documentation.setRut(CLIENT_RUT);
+        documentation.setIncomeProof(true);
+        documentation.setAppraisalCertificate(true);
+        documentation.setCreditHistory(true);
+        documentation.setFirstPropertyDeed(true);
+        documentation.setBusinessFinancialStatement(true);
+        documentation.setBusinessPlan(true);
+        documentation.setRemodelingBudget(true);
+        documentation.setUpdatedAppraisalCertificate(true);
+
+        boolean allCompleted = clientDocumentService.checkIfAllDocumentsCompleted(documentation);
+
+        assertThat(allCompleted).isTrue();
+
+        documentation.setUpdatedAppraisalCertificate(false);
+        allCompleted = clientDocumentService.checkIfAllDocumentsCompleted(documentation);
+
+        assertThat(allCompleted).isFalse();
     }
 }

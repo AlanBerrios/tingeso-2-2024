@@ -9,7 +9,7 @@ export default function ClientSavingAccount() {
   const [accountHistory, setAccountHistory] = useState([]);
   const [error, setError] = useState("");
   const [transaction, setTransaction] = useState({
-    type: "deposit", // or "withdrawal"
+    type: "deposit",
     amount: "",
   });
 
@@ -21,6 +21,7 @@ export default function ClientSavingAccount() {
       fetchAccountHistory();
     } catch (error) {
       setAccount(null);
+      setError("Error al obtener la cuenta de ahorros.");
     }
   };
 
@@ -40,9 +41,9 @@ export default function ClientSavingAccount() {
       await gestionService.createSavingsAccount({
         rut: rut,
         creationDate: dayjs().format("YYYY-MM-DD"),
-        balance: 0,
+        balance: 0, // Asegura un valor inicial de balance
       });
-      fetchSavingAccount(); // Refresh account details
+      fetchSavingAccount();
     } catch (error) {
       setError("Error al crear la cuenta de ahorros.");
     }
@@ -59,15 +60,19 @@ export default function ClientSavingAccount() {
 
     const transactionData = {
       rut: rut,
-      type: transaction.type,
-      amount: transaction.type === "withdrawal" ? -amount : amount,
-      date: dayjs().format("YYYY-MM-DD"),
+      accountType: "Ahorros",
+      transactionType: transaction.type === "deposit" ? "Depósito" : "Retiro",
+      transactionAmount: amount,
+      balanceAfterTransaction: transaction.type === "withdrawal" 
+        ? (account.balance - amount).toFixed(2)
+        : (account.balance + amount).toFixed(2),
+      transactionDate: dayjs().format("YYYY-MM-DD"),
+      transactionTime: dayjs().format("HH:mm:ss"),
     };
 
     try {
-      // Add the transaction and update account balance
       await gestionService.createAccountHistory(transactionData);
-      fetchSavingAccount(); // Refresh the account and history after transaction
+      fetchSavingAccount();
       setTransaction({ type: "deposit", amount: "" });
     } catch (error) {
       setError("Error al procesar la transacción.");
@@ -86,7 +91,7 @@ export default function ClientSavingAccount() {
       {account ? (
         <>
           <p>RUT del Cliente: {rut}</p>
-          <p>Balance Actual: ${account.balance.toLocaleString()}</p>
+          <p>Balance Actual: ${account.balance ? account.balance.toLocaleString() : 0}</p>
 
           {/* Transaction form */}
           <form onSubmit={handleTransactionSubmit} className="mb-4">
@@ -124,24 +129,30 @@ export default function ClientSavingAccount() {
             <thead>
               <tr>
                 <th>Fecha</th>
-                <th>Tipo</th>
+                <th>Hora</th>
+                <th>Tipo de Cuenta</th>
+                <th>Tipo de Transacción</th>
                 <th>Monto</th>
+                <th>Saldo Después</th>
               </tr>
             </thead>
             <tbody>
               {accountHistory.length > 0 ? (
                 accountHistory.map((history) => (
                   <tr key={history.id}>
-                    <td>{dayjs(history.date).format("DD/MM/YYYY")}</td>
-                    <td>{history.type === "deposit" ? "Depósito" : "Retiro"}</td>
-                    <td style={{ color: history.amount < 0 ? "red" : "green" }}>
-                      ${Math.abs(history.amount).toLocaleString()}
+                    <td>{dayjs(history.transactionDate).format("DD/MM/YYYY")}</td>
+                    <td>{history.transactionTime}</td>
+                    <td>{history.accountType}</td>
+                    <td>{history.transactionType}</td>
+                    <td style={{ color: history.transactionAmount < 0 ? "red" : "green" }}>
+                      ${Math.abs(history.transactionAmount).toLocaleString()}
                     </td>
+                    <td>${history.balanceAfterTransaction.toLocaleString()}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="3" className="text-center">
+                  <td colSpan="6" className="text-center">
                     No hay transacciones registradas.
                   </td>
                 </tr>

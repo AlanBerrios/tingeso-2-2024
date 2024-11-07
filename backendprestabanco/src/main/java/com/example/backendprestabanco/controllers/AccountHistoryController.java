@@ -35,16 +35,23 @@ public class AccountHistoryController {
     @PostMapping("/")
     public ResponseEntity<?> saveAccountHistory(@RequestBody AccountHistoryEntity history) {
         try {
-            if (history.getRut() == null || history.getTransactionType() == null || history.getTransactionAmount() == null) {
-                logger.warn("Campos obligatorios faltantes en la transacción.");
+            // Validación de campos obligatorios
+            if (history.getRut() == null || history.getTransactionType() == null ||
+                    history.getTransactionAmount() == null || history.getBalanceAfterTransaction() == null ||
+                    history.getTransactionDate() == null || history.getTransactionTime() == null) {
+
+                logger.warn("Campos obligatorios faltantes en la transacción: {}", history);
                 return ResponseEntity.badRequest().body("Todos los campos requeridos deben estar presentes");
             }
 
             AccountHistoryEntity newHistory = accountHistoryService.saveAccountHistory(history);
             return ResponseEntity.ok(newHistory);
+
         } catch (Exception e) {
             logger.error("Error al guardar el historial de la cuenta: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el historial de la cuenta: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al guardar el historial de la cuenta: " + e.getMessage());
         }
     }
+
 }

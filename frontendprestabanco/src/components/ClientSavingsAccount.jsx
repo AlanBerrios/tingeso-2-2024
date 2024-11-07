@@ -81,7 +81,7 @@ useEffect(() => {
     const transactionData = {
         rut: rut,
         accountType: "Ahorros",
-        transactionType: transaction.type === "Depósito" ? "Depósito" : "Retiro",
+        transactionType: transaction.type === "deposit" ? "Depósito" : "Retiro",
         transactionAmount: amount,
         balanceAfterTransaction: parseFloat(transaction.type === "withdrawal" 
           ? (account.balance - amount).toFixed(2)
@@ -93,7 +93,7 @@ useEffect(() => {
     try {
       await gestionService.createAccountHistory(transactionData);
       fetchSavingAccount();
-      setTransaction({ type: "Depósito", amount: "" });
+      setTransaction({ type: "deposit", amount: "" });
     } catch (error) {
       console.error("Error al procesar la transacción:", error); // Log en la consola
       setError("Error al procesar la transacción.");

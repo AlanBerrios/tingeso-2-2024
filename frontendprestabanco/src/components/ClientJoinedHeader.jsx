@@ -3,6 +3,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function ClientJoinedHeader() {
+  const clientRut = localStorage.getItem("clientRut");
+
   return (
     <nav
       className="navbar navbar-expand-lg mb-3"
@@ -35,7 +37,7 @@ export default function ClientJoinedHeader() {
               <Link className="nav-link" to="/mortgageListForClient">Mis Solicitudes de Crédito</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/clientSavingAccount/:rut">Mis Cuentas de Ahorros</Link>
+              <Link className="nav-link" to={`/clientSavingAccount/${clientRut}`}>Mis Cuentas de Ahorros</Link>
             </li>
           </ul>
         </div>

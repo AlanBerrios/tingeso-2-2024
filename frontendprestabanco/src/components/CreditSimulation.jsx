@@ -55,7 +55,7 @@ export default function CreditSimulation() {
         </div>
 
         <div className="col-md-6">
-          <label htmlFor="termInYears" className="form-label">Plazo en Años</label>
+          <label htmlFor="termInYears" className="form-label">Plazo en Años (Chile)</label>
           <input
             id="termInYears"
             type="text"

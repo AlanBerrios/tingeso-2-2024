@@ -11,11 +11,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -48,11 +51,31 @@ class AccountHistoryServiceTest {
 
     @Test
     void whenSaveAccountHistory_thenReturnSavedHistory() {
+        // Crear un historial de cuenta con valores válidos
         AccountHistoryEntity history = new AccountHistoryEntity();
-        given(accountHistoryRepository.save(history)).willReturn(history);
+        history.setRut("21.055.282-0");
+        history.setAccountType("Ahorros");
+        history.setTransactionType("Depósito");
+        history.setTransactionAmount(10000.0);
+        history.setBalanceAfterTransaction(25000.0);
+        history.setTransactionDate(LocalDate.now());
+        history.setTransactionTime(LocalTime.now());
 
+        // Configurar el mock para la llamada al método nativo en lugar de .save()
+        doNothing().when(accountHistoryRepository).saveTransactionNativeQuery(
+                history.getRut(),
+                history.getTransactionType(),
+                history.getTransactionDate(),
+                history.getTransactionAmount()
+        );
+
+        // Ejecutar el método de servicio
         AccountHistoryEntity result = accountHistoryService.saveAccountHistory(history);
 
+        // Verificar que el resultado no sea null
         assertThat(result).isNotNull();
+        assertThat(result.getRut()).isEqualTo(history.getRut());
+        assertThat(result.getTransactionAmount()).isEqualTo(history.getTransactionAmount());
     }
+
 }

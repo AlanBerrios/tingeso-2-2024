@@ -77,28 +77,32 @@ useEffect(() => {
       setError("Ingrese un monto válido.");
       return;
     }
-
+  
     const transactionData = {
-        rut: rut,
-        accountType: "Ahorros",
-        transactionType: transaction.type === "deposit" ? "Depósito" : "Retiro",
-        transactionAmount: amount,
-        balanceAfterTransaction: parseFloat(transaction.type === "withdrawal" 
+      rut: rut,
+      accountType: "Ahorros",
+      transactionType: transaction.type === "deposit" ? "Depósito" : "Retiro",
+      transactionAmount: amount,
+      balanceAfterTransaction: parseFloat(
+        transaction.type === "withdrawal"
           ? (account.balance - amount).toFixed(2)
-          : (account.balance + amount).toFixed(2)),
-        transactionDate: dayjs().format("YYYY-MM-DD"),
-        transactionTime: dayjs().format("HH:mm:ss"),
-      };
-
+          : (account.balance + amount).toFixed(2)
+      ),
+      transactionDate: dayjs().format("YYYY-MM-DD"),
+      transactionTime: dayjs().format("HH:mm:ss"),
+    };
+  
     try {
+      console.log("Datos de transacción enviados:", transactionData);
       await gestionService.createAccountHistory(transactionData);
       fetchSavingAccount();
       setTransaction({ type: "deposit", amount: "" });
     } catch (error) {
-      console.error("Error al procesar la transacción:", error); // Log en la consola
+      console.error("Error al procesar la transacción:", error);
       setError("Error al procesar la transacción.");
     }
-};
+  };
+  
 
 
 

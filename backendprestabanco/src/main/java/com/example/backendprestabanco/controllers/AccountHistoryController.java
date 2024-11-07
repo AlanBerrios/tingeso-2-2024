@@ -44,6 +44,7 @@ public class AccountHistoryController {
                 return ResponseEntity.badRequest().body("Todos los campos requeridos deben estar presentes");
             }
 
+            // Intento de guardar la entidad en la base de datos
             AccountHistoryEntity newHistory = accountHistoryService.saveAccountHistory(history);
             return ResponseEntity.ok(newHistory);
 

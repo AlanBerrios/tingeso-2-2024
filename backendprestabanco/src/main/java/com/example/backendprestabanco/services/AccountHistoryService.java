@@ -23,7 +23,7 @@ public class AccountHistoryService {
 
     public AccountHistoryEntity saveAccountHistory(AccountHistoryEntity history) {
         try {
-            logger.info("Guardando historial de transacción: {}", history);
+            logger.info("Intentando guardar historial de transacción: {}", history);
             return accountHistoryRepository.save(history);
         } catch (Exception e) {
             logger.error("Error al guardar el historial de transacción: ", e);

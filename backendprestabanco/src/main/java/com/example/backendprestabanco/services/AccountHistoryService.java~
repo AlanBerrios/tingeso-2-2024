@@ -24,22 +24,10 @@ public class AccountHistoryService {
     public AccountHistoryEntity saveAccountHistory(AccountHistoryEntity history) {
         try {
             logger.info("Intentando guardar historial de transacción: {}", history);
-
-            // Usamos el método saveTransactionNativeQuery con los valores individuales
-            accountHistoryRepository.saveTransactionNativeQuery(
-                    history.getRut(),
-                    history.getTransactionType(),
-                    history.getTransactionDate(),
-                    history.getTransactionAmount()
-            );
-
-            // Retornar el objeto 'history' después de guardar (este no contiene ID generado por la BD)
-            return history;
-
+            return accountHistoryRepository.saveTransactionNativeQuery(history);
         } catch (Exception e) {
             logger.error("Error al guardar el historial de transacción: ", e);
             throw e;
         }
     }
-
 }

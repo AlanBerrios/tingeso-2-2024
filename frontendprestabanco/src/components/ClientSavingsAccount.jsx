@@ -98,7 +98,7 @@ useEffect(() => {
       fetchSavingAccount();
       setTransaction({ type: "deposit", amount: "" });
     } catch (error) {
-      console.error("Error al procesar la transacción:", error);
+      console.error("Error al procesar la transacción...:", error);
       setError("Error al procesar la transacción.");
     }
   };

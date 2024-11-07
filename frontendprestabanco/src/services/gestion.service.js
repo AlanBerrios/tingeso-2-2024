@@ -126,8 +126,10 @@ function deleteSavingsAccount(id) {
 
 // Funciones para historial de cuentas
 function createAccountHistory(history) {
+  console.log("Enviando datos de transacción al servidor:", history);
   return axios.post(ACCOUNT_HISTORY_API_URL, history);
 }
+
 
 function getAccountHistory(rut) {
   return axios.get(`${ACCOUNT_HISTORY_API_URL}${rut}`);

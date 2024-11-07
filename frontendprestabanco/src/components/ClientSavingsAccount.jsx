@@ -79,16 +79,17 @@ useEffect(() => {
     }
 
     const transactionData = {
-      rut: rut,
-      accountType: "Ahorros",
-      transactionType: transaction.type === "deposit" ? "Depósito" : "Retiro",
-      transactionAmount: amount,
-      balanceAfterTransaction: transaction.type === "withdrawal" 
-        ? (account.balance - amount).toFixed(2)
-        : (account.balance + amount).toFixed(2),
-      transactionDate: dayjs().format("YYYY-MM-DD"),
-      transactionTime: dayjs().format("HH:mm:ss"),
-    };
+        rut: rut,
+        accountType: "Ahorros",
+        transactionType: transaction.type === "deposit" ? "Depósito" : "Retiro",
+        transactionAmount: amount,
+        balanceAfterTransaction: parseFloat(transaction.type === "withdrawal" 
+          ? (account.balance - amount).toFixed(2)
+          : (account.balance + amount).toFixed(2)),
+        transactionDate: dayjs().format("YYYY-MM-DD"),
+        transactionTime: dayjs().format("HH:mm:ss"),
+      };
+      
 
     try {
       await gestionService.createAccountHistory(transactionData);

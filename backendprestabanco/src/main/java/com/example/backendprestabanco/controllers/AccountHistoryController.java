@@ -3,6 +3,7 @@ package com.example.backendprestabanco.controllers;
 import com.example.backendprestabanco.entities.AccountHistoryEntity;
 import com.example.backendprestabanco.services.AccountHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +26,18 @@ public class AccountHistoryController {
 
     // Guardar nueva transacción en el historial de cuentas
     @PostMapping("/")
-    public ResponseEntity<AccountHistoryEntity> saveAccountHistory(@RequestBody AccountHistoryEntity history) {
-        AccountHistoryEntity newHistory = accountHistoryService.saveAccountHistory(history);
-        return ResponseEntity.ok(newHistory);
+    public ResponseEntity<?> saveAccountHistory(@RequestBody AccountHistoryEntity history) {
+        try {
+            if (history.getRut() == null || history.getTransactionType() == null || history.getTransactionAmount() == null) {
+                return ResponseEntity.badRequest().body("Todos los campos requeridos deben estar presentes");
+            }
+
+            AccountHistoryEntity newHistory = accountHistoryService.saveAccountHistory(history);
+            return ResponseEntity.ok(newHistory);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el historial de la cuenta");
+        }
     }
+
 }

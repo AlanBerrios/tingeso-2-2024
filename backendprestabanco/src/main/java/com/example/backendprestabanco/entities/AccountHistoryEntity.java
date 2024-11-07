@@ -15,8 +15,10 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class AccountHistoryEntity {
 
+    // id con generated value
     @Id
     @Column(name = "id")
+    @GeneratedValue
     private Long id;
 
     private String rut; // Identificador único del cliente (RUT)

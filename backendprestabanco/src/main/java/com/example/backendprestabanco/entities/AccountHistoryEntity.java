@@ -15,18 +15,30 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class AccountHistoryEntity {
 
-    // id con generated value
     @Id
     @Column(name = "id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Usa IDENTITY si la BD lo soporta
     private Long id;
 
-    private String rut; // Identificador único del cliente (RUT)
+    @Column(nullable = false)
+    private String rut;
 
-    private String accountType; // Tipo de cuenta (Ej. "Ahorros", "Inversiones")
-    private String transactionType; // Tipo de movimiento (Ej. "Retiro", "Depósito")
-    private Double transactionAmount; // Monto del movimiento
-    private Double balanceAfterTransaction; // Saldo despues del movimiento
-    private LocalDate transactionDate; // Fecha del movimiento
-    private LocalTime transactionTime; // Hora del movimiento
+    @Column(nullable = false)
+    private String accountType;
+
+    @Column(nullable = false)
+    private String transactionType;
+
+    @Column(nullable = false)
+    private Double transactionAmount;
+
+    @Column(nullable = false)
+    private Double balanceAfterTransaction;
+
+    @Column(nullable = false)
+    private LocalDate transactionDate;
+
+    @Column(nullable = false)
+    private LocalTime transactionTime;
+
 }

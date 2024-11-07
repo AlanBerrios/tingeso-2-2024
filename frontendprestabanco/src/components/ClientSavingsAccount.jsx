@@ -89,16 +89,17 @@ useEffect(() => {
         transactionDate: dayjs().format("YYYY-MM-DD"),
         transactionTime: dayjs().format("HH:mm:ss"),
       };
-      
 
     try {
       await gestionService.createAccountHistory(transactionData);
       fetchSavingAccount();
       setTransaction({ type: "deposit", amount: "" });
     } catch (error) {
+      console.error("Error al procesar la transacción:", error); // Log en la consola
       setError("Error al procesar la transacción.");
     }
   };
+
 
   useEffect(() => {
     fetchSavingAccount();

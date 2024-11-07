@@ -16,8 +16,7 @@ import java.time.LocalTime;
 public class AccountHistoryEntity {
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Usa IDENTITY si la BD lo soporta
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -40,5 +39,4 @@ public class AccountHistoryEntity {
 
     @Column(nullable = false)
     private LocalTime transactionTime;
-
 }

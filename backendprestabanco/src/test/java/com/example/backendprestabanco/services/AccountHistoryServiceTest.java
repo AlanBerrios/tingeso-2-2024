@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -51,7 +51,6 @@ class AccountHistoryServiceTest {
 
     @Test
     void whenSaveAccountHistory_thenReturnSavedHistory() {
-        // Crear un historial de cuenta con valores válidos
         AccountHistoryEntity history = new AccountHistoryEntity();
         history.setRut("21.055.282-0");
         history.setAccountType("Ahorros");
@@ -61,21 +60,30 @@ class AccountHistoryServiceTest {
         history.setTransactionDate(LocalDate.now());
         history.setTransactionTime(LocalTime.now());
 
-        // Configurar el mock para la llamada al método nativo en lugar de .save()
+        // Simular la ejecución de la consulta nativa sin retorno
         doNothing().when(accountHistoryRepository).saveTransactionNativeQuery(
                 history.getRut(),
+                history.getAccountType(),
                 history.getTransactionType(),
+                history.getTransactionAmount(),
+                history.getBalanceAfterTransaction(),
                 history.getTransactionDate(),
-                history.getTransactionAmount()
+                history.getTransactionTime()
         );
 
-        // Ejecutar el método de servicio
-        AccountHistoryEntity result = accountHistoryService.saveAccountHistory(history);
+        accountHistoryService.saveAccountHistory(history);
 
-        // Verificar que el resultado no sea null
-        assertThat(result).isNotNull();
-        assertThat(result.getRut()).isEqualTo(history.getRut());
-        assertThat(result.getTransactionAmount()).isEqualTo(history.getTransactionAmount());
+        // Verificar que el método fue llamado correctamente
+        verify(accountHistoryRepository, times(1)).saveTransactionNativeQuery(
+                history.getRut(),
+                history.getAccountType(),
+                history.getTransactionType(),
+                history.getTransactionAmount(),
+                history.getBalanceAfterTransaction(),
+                history.getTransactionDate(),
+                history.getTransactionTime()
+        );
     }
+
 
 }

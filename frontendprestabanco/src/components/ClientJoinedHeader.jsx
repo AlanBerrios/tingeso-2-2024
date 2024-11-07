@@ -34,6 +34,9 @@ export default function ClientJoinedHeader() {
             <li className="nav-item">
               <Link className="nav-link" to="/mortgageListForClient">Mis Solicitudes de Crédito</Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/clientSavingAccount">Mis Cuentas de Ahorros</Link>
+            </li>
           </ul>
         </div>
       </div>

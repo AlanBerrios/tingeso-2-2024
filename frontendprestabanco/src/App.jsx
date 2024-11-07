@@ -25,6 +25,7 @@ import MortgageListForClient from './components/MortgageListForClient';
 import SavingsCapacity from './components/SavingCapacity';
 import LoanCostCalculate from './components/LoanCostCalculate';
 import EditClient from './components/EditClient';
+import ClientSavingAccount from './components/ClientSavingsAccount';
 
 function App() {
   const location = useLocation(); // Detecta la ruta actual
@@ -55,7 +56,8 @@ function App() {
       location.pathname === '/creditRequest' ||
       location.pathname === '/clientDocument' ||
       location.pathname === '/mortgageListForClient' ||
-      location.pathname.startsWith('/mortgageDetailsForClient/')
+      location.pathname.startsWith('/mortgageDetailsForClient/') ||
+      location.pathname.startsWith('/clientSavingAccount/')
     ) {
       return <ClientJoinedHeader />;
 
@@ -86,6 +88,7 @@ function App() {
         <Route path="/savingCapacity" element={<SavingsCapacity />} />
         <Route path="/loanCostCalculate" element={<LoanCostCalculate />} />
         <Route path="/editClient/:rut" element={<EditClient />} />
+        <Route path="/clientSavingAccount/:rut" element={<ClientSavingAccount />} />
       </Routes>
     </>
   );

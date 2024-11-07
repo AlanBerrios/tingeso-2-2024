@@ -15,8 +15,10 @@ import java.time.LocalDate;
 public class SavingsAccountEntity {
 
     @Id
-    @Column(name = "account_id") // Asegúrate de que el nombre coincida con el nombre de la columna en la BD
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Genera el ID automáticamente
+    @Column(name = "account_id")
     private Long accountId;
+
 
     @Column(nullable = false)
     private String rut; // Identificador único del cliente (RUT)

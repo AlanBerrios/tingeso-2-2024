@@ -35,19 +35,39 @@ export default function ClientSavingAccount() {
     }
   };
 
-  // Handle account creation
-  const handleCreateAccount = async () => {
-    try {
-      await gestionService.createSavingsAccount({
-        rut: rut,
-        creationDate: dayjs().format("YYYY-MM-DD"),
-        balance: 0, // Asegura un valor inicial de balance
-      });
-      fetchSavingAccount();
-    } catch (error) {
-      setError("Error al crear la cuenta de ahorros.");
-    }
-  };
+  const [nextId, setNextId] = useState(null);
+
+// Función para obtener el siguiente ID disponible
+const fetchNextId = async () => {
+  try {
+    const accounts = await gestionService.getSavingsAccounts();
+    const highestId = Math.max(...accounts.data.map((acc) => acc.accountId), 0);
+    setNextId(highestId + 1); // Próximo ID disponible
+  } catch (error) {
+    setError("Error al obtener el próximo ID para la cuenta.");
+  }
+};
+
+// Al crear la cuenta, usa el ID generado
+const handleCreateAccount = async () => {
+  try {
+    await gestionService.createSavingsAccount({
+      accountId: nextId, // Usa el próximo ID disponible
+      rut: rut,
+      creationDate: dayjs().format("YYYY-MM-DD"),
+      balance: 0,
+    });
+    fetchSavingAccount(); // Refresca la cuenta
+  } catch (error) {
+    setError("Error al crear la cuenta de ahorros.");
+  }
+};
+
+useEffect(() => {
+  fetchSavingAccount();
+  fetchNextId(); // Establece el próximo ID al cargar
+}, [rut]);
+
 
   // Handle transaction submission
   const handleTransactionSubmit = async (e) => {

@@ -44,6 +44,23 @@ export default function CreditEvaluation() {
     fetchMortgage();
   }, [id]);
 
+  const handleDocumentationReview = async () => {
+    localStorage.setItem("creditEvaluationId", id);
+    navigate(`/documentationReview/${mortgage.rut}`);
+  
+    // Simular un retraso para que la página de revisión de documentación actualice el valor.
+    setTimeout(async () => {
+      try {
+        const documentationResponse = await gestionService.getDocumentationByRut(mortgage.rut);
+        setDocumentationResult(documentationResponse.data.allDocumentsCompleted ? "Aprobado" : "Rechazado");
+      } catch (error) {
+        console.error("Error al revisar la documentación:", error);
+        setDocumentationResult("Rechazado");
+      }
+    }, 500); // Espera 500ms para que el usuario navegue a la revisión
+  };
+  
+
   const evaluateLoan = async () => {
     if (!mortgage || clientIncome === 0 || workStability === "" || documentationResult === null) {
       return;
@@ -111,19 +128,18 @@ export default function CreditEvaluation() {
               <tr>
                 <th>Documentación</th>
                 <td>
-                  <button
-                    className="btn btn-info"
-                    onClick={() => {
-                      localStorage.setItem("creditEvaluationId", id);
-                      navigate(`/documentationReview/${mortgage.rut}`);
-                    }}
-                  >
-                    Revisar Documentación
-                  </button>
+                <button
+                  className="btn btn-info"
+                  onClick={handleDocumentationReview}
+                >
+                  Revisar Documentación
+                </button>
+
                 </td>
-                <td style={{ color: documentationResult === "Aprobado" ? "green" : "red" }}>
-                  {documentationResult || "Pendiente"}
+                <td style={{ color: documentationResult === "Aprobado" ? "green" : documentationResult === "Rechazado" ? "red" : "black" }}>
+                  {documentationResult === null ? "Pendiente" : documentationResult}
                 </td>
+
               </tr>
               <tr>
                 <th>Tipo de Préstamo</th>

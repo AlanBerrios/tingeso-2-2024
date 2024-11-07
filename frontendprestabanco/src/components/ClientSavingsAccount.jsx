@@ -98,7 +98,8 @@ useEffect(() => {
       console.error("Error al procesar la transacción:", error); // Log en la consola
       setError("Error al procesar la transacción.");
     }
-  };
+};
+
 
 
   useEffect(() => {

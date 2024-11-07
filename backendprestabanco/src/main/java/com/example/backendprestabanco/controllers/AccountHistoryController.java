@@ -16,7 +16,7 @@ import java.util.List;
 @CrossOrigin("*")
 public class AccountHistoryController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AccountHistoryController.class);
+    public static final Logger logger = LoggerFactory.getLogger(AccountHistoryController.class);
 
 
     @Autowired
